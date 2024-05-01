@@ -1,14 +1,46 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 import uvicorn
+import schemas
+from sqlalchemy.orm import Session
+from typing import List, Optional
+
+
+import crud, models, schemas
+from database import SessionLocal, engine
 
 app = FastAPI()
 
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+models.Base.metadata.create_all(bind=engine)
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+
+@app.post("/expenditures")
+def create_expenditure(expenditure: schemas.ExpenditureBase, db: Session = Depends(get_db)):
+    return crud.create_expenditure(db=db, expenditure=expenditure)
+
+
+@app.get("/expenditures/{id_group}", response_model=List[schemas.ExpenditureBase])
+def read_expenditures(
+    id_group: int, id_user: Optional[int] = None,
+    skip: int = 0, limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    expenditures = crud.get_expenditures(
+        db, id_group, id_user, skip=skip, limit=limit
+    )
+
+    print(expenditures)
+
+    return expenditures
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
