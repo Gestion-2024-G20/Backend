@@ -14,3 +14,11 @@ class Expenditure(ExpenditureBase):
 	time_created: str
 
     
+class UserBase(BaseModel):
+	id_user: int
+    password : str
+    token : str
+    mail : str
+    celular : str
+
+ 

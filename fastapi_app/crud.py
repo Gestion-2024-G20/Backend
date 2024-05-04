@@ -2,7 +2,7 @@ from uuid import uuid4
 from sqlalchemy.orm import Session
 
 import schemas
-from models import Expenditure
+from models import Expenditure, User
 
 def create_expenditure(db: Session, expenditure: schemas.ExpenditureBase):
     db_expenditure = Expenditure(
@@ -45,6 +45,52 @@ def get_expenditures(
         ) 
 
         for e in expenditures
+    ]
+
+def create_user(db: Session, user: schemas.UserBase):
+    db_user = User(
+        id_user=user.id_user,
+        password=user.password,
+        token=user.token,
+        mail=user.mail
+        celular=user.celular
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user
+
+
+def get_users(
+    db: Session, 
+    skip: int = 0, 
+    limit: int = 100, 
+    id_user: int = None
+):
+    query = db.query(
+    	User.id_user,
+    	User.password,
+    	User.token, 
+    	User.mail, 
+    	User.celular
+    )
+
+    if id_user is not None:
+        query = query.filter_by(id_user=id_user)
+
+    users = query.offset(skip).limit(limit).all()
+
+    return [
+        schemas.User(
+            id_user=u.id_user,
+            password=u.password,
+            token=u.token,
+            mail=u.mail
+            celular=u.celular
+        ) 
+
+        for u in users
     ]
 
     
