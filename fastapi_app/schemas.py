@@ -15,10 +15,10 @@ class Expenditure(ExpenditureBase):
 
     
 class UserBase(BaseModel):
-	id_user: int
-    password : str
-    token : str
-    mail : str
-    celular : str
+	id_user : int
+	password : str
+	token : str
+	mail : str
+	celular : str
 
  

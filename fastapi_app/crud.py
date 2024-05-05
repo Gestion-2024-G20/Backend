@@ -52,7 +52,7 @@ def create_user(db: Session, user: schemas.UserBase):
         id_user=user.id_user,
         password=user.password,
         token=user.token,
-        mail=user.mail
+        mail=user.mail,
         celular=user.celular
     )
     db.add(db_user)
@@ -86,7 +86,7 @@ def get_users(
             id_user=u.id_user,
             password=u.password,
             token=u.token,
-            mail=u.mail
+            mail=u.mail,
             celular=u.celular
         ) 
 
