@@ -1,11 +1,10 @@
 [tool.poetry]
-name = "Splitify-Backend"
+name = "fastapi_app"
 version = "0.1.0"
 description = "Backend for Splitify"
-authors = ["Guido Bergman <gbergman@fi.uba.ar>"]
+authors = ["Guido Bergman <gbergman@fi.uba.ar>", "Pedro Flynn <pflynn@fi.uba.ar>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "Splitify-Backend"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
