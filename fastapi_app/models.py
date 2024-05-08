@@ -26,6 +26,7 @@ class User(Base):
 
     
     id_user = Column(Integer, Sequence('user_id_seq'), primary_key=True)
+    username = Column(String)
     password = Column(String)
     token = Column(String)
     mail = Column(String)
