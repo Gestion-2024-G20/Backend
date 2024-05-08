@@ -22,4 +22,9 @@ class User(BaseModel):
 	mail : str
 	celular : str
 
+class GroupBase(BaseModel):
+	name : str
  
+class Group(GroupBase):
+	id_group : int
+	time_created: str
