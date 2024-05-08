@@ -73,6 +73,22 @@ def read_users(
 
     return users
 
+@app.get("/user_groups")
+def get_user_groups(
+    id_group: Optional[int] = None,
+    db: Session = Depends(get_db)
+):
+    # TODO: filter by id_user
+    groups = crud.get_user_groups(
+        db, id_group
+    )
+    
+    print(groups)    
+    return groups
+
+@app.post("/user_groups")
+def create_user_group(user_group: schemas.GroupBase, db: Session = Depends(get_db)):
+    return crud.create_user_group(db=db, user_group=user_group)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

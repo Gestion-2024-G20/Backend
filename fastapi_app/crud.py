@@ -2,7 +2,7 @@ from uuid import uuid4
 from sqlalchemy.orm import Session
 
 import schemas
-from models import Expenditure, User
+from models import Expenditure, User, Group
 
 def create_expenditure(db: Session, expenditure: schemas.ExpenditureBase):
     db_expenditure = Expenditure(
@@ -93,6 +93,29 @@ def get_users(
         for u in users
     ]
 
+def get_user_groups(
+    db: Session,
+    id_user: int = None
+):    
+    groups = db.query(Group).all()
+
+    return [
+        schemas.Group(
+            id_group=g.id_group,
+            name=g.name,
+            time_created=g.time_created.strftime('%Y-%m-%d %H:%M:%S')
+        ) 
+
+        for g in groups
+    ]
     
-
-
+def create_user_group(db: Session, user_group: schemas.GroupBase):
+    db_group = Group(
+        id_users="",
+        name=user_group.name,
+    )
+    db.add(db_group)
+    db.commit()
+    db.refresh(db_group)
+    
+    return db_group

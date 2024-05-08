@@ -32,4 +32,12 @@ class User(Base):
     celular = Column(String)
     #foto_perfil = Column()
 
+class Group(Base):
+    __tablename__ = "groups"
+
+    
+    id_group = Column(Integer, Sequence('group_id_seq'), primary_key=True)
+    id_users = Column(String)
+    name = Column(String)
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
     
