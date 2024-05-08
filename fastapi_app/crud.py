@@ -48,8 +48,22 @@ def get_expenditures(
     ]
 
 def create_user(db: Session, user: schemas.User):
+    users = db.query(
+        User.id_user,
+        User.username, 
+    	User.password,
+    	User.token, 
+    	User.mail, 
+    	User.celular
+        ).all();   
+    maxid = 0
+    for u in users:
+        if u.id_user > maxid: 
+            maxid = u.id_user
+
+    maxid = maxid + 1
     db_user = User(
-        id_user=user.id_user,
+        id_user=maxid,
         username= user.username,
         password=user.password,
         token=user.token,
@@ -100,6 +114,36 @@ def get_users(
 
         for u in users
     ]
+
+    
+def get_user(
+    db: Session, 
+    username: str,
+
+):
+    print("query ")
+    query = db.query(
+    	User.id_user,
+        User.username, 
+    	User.password,
+    	User.token, 
+    	User.mail, 
+    	User.celular
+    )
+
+
+    query = query.filter_by(username=username)
+
+    user = query.first()
+
+    return schemas.User(
+            id_user=user[0],
+            username=user[1], 
+            password=user[2],
+            token=user[3],
+            mail=user[4],
+            celular=user[5]
+        ) 
 
     
 

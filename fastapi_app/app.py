@@ -76,5 +76,22 @@ def read_users(
     return users
 
 
+@app.get("/user/{username}", response_model=schemas.User)
+def read_users(
+    username: str,
+    db: Session = Depends(get_db)
+):
+    user = crud.get_user(
+        db, username
+    )
+
+    print(user)
+
+    return user
+
+@app.get("/hello")
+async def read_root():
+    return {"message": "Estos son los datos desde el backend"}
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
