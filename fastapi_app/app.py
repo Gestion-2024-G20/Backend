@@ -76,18 +76,18 @@ def read_users(
     return users
 
 
-@app.get("/user/{username}", response_model=schemas.User)
+@app.get("/user/{username}", response_model=List[schemas.User])
 def read_users(
     username: str,
     db: Session = Depends(get_db)
 ):
-    user = crud.get_user(
+    users = crud.get_user(
         db, username
     )
 
-    print(user)
+    print(users)
 
-    return user
+    return users
 
 @app.get("/hello")
 async def read_root():

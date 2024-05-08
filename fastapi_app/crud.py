@@ -135,15 +135,19 @@ def get_user(
     query = query.filter_by(username=username)
 
     user = query.first()
+    if user :
 
-    return schemas.User(
-            id_user=user[0],
-            username=user[1], 
-            password=user[2],
-            token=user[3],
-            mail=user[4],
-            celular=user[5]
-        ) 
+        return [schemas.User(
+                id_user=user[0],
+                username=user[1], 
+                password=user[2],
+                token=user[3],
+                mail=user[4],
+                celular=user[5]
+            ) ]
+    else: 
+        return []
+
 
     
 
