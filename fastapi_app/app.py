@@ -55,18 +55,20 @@ def read_expenditures(
 
 
 @app.post("/users")
-def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
+def create_user(user: schemas.User, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
-@app.get("/users", response_model=List[schemas.UserBase])
+@app.get("/users", response_model=List[schemas.User])
 def read_users(
     id_user: Optional[int] = None,
-    skip: int = 0, limit: int = 100, 
+    username: Optional[str] = None,
+    skip: int = 0, 
+    limit: int = 100, 
     db: Session = Depends(get_db)
 ):
     users = crud.get_users(
-        db, id_user, skip=skip, limit=limit
+        db, skip, limit, id_user, username
     )
 
     print(users)
@@ -89,6 +91,23 @@ def get_user_groups(
 @app.post("/user_groups")
 def create_user_group(user_group: schemas.GroupBase, db: Session = Depends(get_db)):
     return crud.create_user_group(db=db, user_group=user_group)
+
+@app.get("/user/{username}", response_model=List[schemas.User])
+def read_users(
+    username: str,
+    db: Session = Depends(get_db)
+):
+    users = crud.get_user(
+        db, username
+    )
+
+    print(users)
+
+    return users
+
+@app.get("/hello")
+async def read_root():
+    return {"message": "Estos son los datos desde el backend"}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

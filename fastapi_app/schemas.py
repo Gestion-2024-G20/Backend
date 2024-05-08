@@ -14,8 +14,9 @@ class Expenditure(ExpenditureBase):
 	time_created: str
 
     
-class UserBase(BaseModel):
+class User(BaseModel):
 	id_user : int
+	username: str
 	password : str
 	token : str
 	mail : str

@@ -1,1 +1,4 @@
 fastapi_app/__pycache__
+fastapi_app/sql_app.db
+
+*.db

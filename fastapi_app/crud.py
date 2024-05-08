@@ -47,9 +47,24 @@ def get_expenditures(
         for e in expenditures
     ]
 
-def create_user(db: Session, user: schemas.UserBase):
+def create_user(db: Session, user: schemas.User):
+    users = db.query(
+        User.id_user,
+        User.username, 
+    	User.password,
+    	User.token, 
+    	User.mail, 
+    	User.celular
+        ).all();   
+    maxid = 0
+    for u in users:
+        if u.id_user > maxid: 
+            maxid = u.id_user
+
+    maxid = maxid + 1
     db_user = User(
-        id_user=user.id_user,
+        id_user=maxid,
+        username= user.username,
         password=user.password,
         token=user.token,
         mail=user.mail,
@@ -66,10 +81,13 @@ def get_users(
     db: Session, 
     skip: int = 0, 
     limit: int = 100, 
-    id_user: int = None
+    id_user: int = None, 
+    username: str = None,
+
 ):
     query = db.query(
     	User.id_user,
+        User.username, 
     	User.password,
     	User.token, 
     	User.mail, 
@@ -79,11 +97,15 @@ def get_users(
     if id_user is not None:
         query = query.filter_by(id_user=id_user)
 
+    if username is not None:
+        query = query.filter_by(username=username)
+
     users = query.offset(skip).limit(limit).all()
 
     return [
         schemas.User(
             id_user=u.id_user,
+            username=u.username, 
             password=u.password,
             token=u.token,
             mail=u.mail,
@@ -92,13 +114,45 @@ def get_users(
 
         for u in users
     ]
+def get_user(
+    db: Session, 
+    username: str,
+
+):
+    print("query ")
+    query = db.query(
+    	User.id_user,
+        User.username, 
+    	User.password,
+    	User.token, 
+    	User.mail, 
+    	User.celular
+    )
+
+
+    query = query.filter_by(username=username)
+
+    user = query.first()
+    if user :
+
+        return [schemas.User(
+                id_user=user[0],
+                username=user[1], 
+                password=user[2],
+                token=user[3],
+                mail=user[4],
+                celular=user[5]
+            ) ]
+    else: 
+        return []
+
 
 def get_user_groups(
     db: Session,
     id_user: int = None
 ):    
     groups = db.query(Group).all()
-
+    
     return [
         schemas.Group(
             id_group=g.id_group,
