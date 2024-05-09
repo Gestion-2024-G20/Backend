@@ -26,13 +26,21 @@ class User(BaseModel):
 class Group(BaseModel):
 	id_group : int
 	name: str
-	admins_usernames: List[str]
-	members_usernames: List[str]
+	members_count: int
 	time_created: str
-	categories: List[str]
+class GroupMembers(BaseModel):
+	id_group : int
+	id_user : int
+	admin : bool
+class GroupCategories(BaseModel):
+    id_group : int 
+    id_category : int
+class Category(BaseModel):
+    id_category : int
+    name : str
 
 class ResponseModel(BaseModel):
     code:int
     message:str
     detail:str
-    dataModel: Any
+    dataModel:Any

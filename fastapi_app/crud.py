@@ -7,7 +7,6 @@ from models import *
 
 def create_expenditure(db: Session, expenditure: schemas.ExpenditureBase):
     db_expenditure = Expenditure(
-        id_user=expenditure.id_user,
         amount=expenditure.amount,
         id_group=expenditure.id_group,
         description=expenditure.description
@@ -49,22 +48,8 @@ def get_expenditures(
     ]
 
 def create_user(db: Session, user: schemas.User):
-    users = db.query(
-        User.id_user,
-        User.username, 
-    	User.password,
-    	User.token, 
-    	User.mail, 
-    	User.celular
-        ).all();   
-    maxid = 0
-    for u in users:
-        if u.id_user > maxid: 
-            maxid = u.id_user
 
-    maxid = maxid + 1
     db_user = User(
-        id_user=maxid,
         username= user.username,
         password=user.password,
         token=user.token,
@@ -150,42 +135,35 @@ def get_user(
 
 def get_groups(
     db: Session,
-    id_user: int = None
+    skip: int, 
+    limit: int, 
+    id_group: int = None,
+    name: str = None, 
 ):    
-    groups = db.query(Group).all()
+    query = db.query(Group)
+
+    if id_group is not None:
+        query = query.filter_by(id_group=id_group)
+
+    if name is not None:
+        query = query.filter_by(name=name)
+
+    groups = query.offset(skip).limit(limit).all()
     
     return [
         schemas.Group(
             id_group=g.id_group,
             name=g.name,
-            time_created=g.time_created.strftime('%Y-%m-%d %H:%M:%S')
+            members_count=g.members_count,
+            time_created=g.time_created.strftime('%Y-%m-%d %H:%M:%S'),
         ) 
 
         for g in groups
     ]
     
 def create_group(db: Session, group: schemas.Group):
-    groups = db.query(
-        Group.id_group,
-        Group.admins_usernames, 
-    	Group.members_usernames,
-    	Group.name, 
-    	Group.time_created, 
-    	Group.categories
-        ).all(); 
     
-    maxid = 0
-    for g in groups:
-        if g.id_group > maxid: 
-            maxid = g.id_group
-
-    maxid = maxid + 1
-
     db_group = Group(
-        id_group=maxid,
-        admins_usernames=group.admins_usernames,
-        members_usernames=group.members_usernames,
-        categories=group.categories,
         time_created=group.time_created,
         name=group.name,
     )

@@ -1,6 +1,6 @@
 
 from typing import List
-from sqlalchemy import Column, Float, String, Integer, Sequence,  DateTime
+from sqlalchemy import ARRAY, Boolean, Column, Float, ForeignKey, String, Integer, Sequence,  DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
@@ -32,14 +32,28 @@ class User(Base):
     token = Column(String)
     mail = Column(String)
     celular = Column(String)
-    #foto_perfil = Column()
 
 class Group(Base):
     __tablename__ = "groups"
     
-    id_group = Column(Integer, Sequence('group_id_seq'), primary_key=True)
+    id_group = Column(Integer,primary_key=True)
     name = Column(String)
-    admins_usernames = Column(List[String])
-    members_usernames = Column(List[String])
-    categories = Column(List[String])
+    members_count = Column(Integer)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
+
+class GroupMembers(Base):
+    __tablename__ = "groupMembers"
+      
+    id_group = Column(Integer, ForeignKey('groups.id_group', ondelete='CASCADE'), primary_key=True)
+    id_user = Column(Integer, ForeignKey('users.id_user', ondelete='CASCADE'), primary_key=True)
+    admin = Column(Boolean)
+class GroupCategories(Base):
+    __tablename__ = "groupCategories"
+      
+    id_group = Column(Integer, ForeignKey('groups.id_group', ondelete='CASCADE'), primary_key=True)
+    id_category = Column(Integer, ForeignKey('categories.id_category', ondelete='CASCADE'), primary_key=True)
+class Category(Base):
+    __tablename__ = "categories"
+     
+    id_category = Column(Integer,  Sequence('categoryid_seq'), primary_key=True)
+    name = Column(String)

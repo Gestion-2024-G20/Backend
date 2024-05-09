@@ -156,11 +156,14 @@ def read_users(
 @app.get("/groups")
 def get_groups(
     id_group: Optional[int] = None,
+    name: Optional[str] = None,
+    skip: int = 0, 
+    limit: int = 100, 
     db: Session = Depends(get_db)
 ):
     # TODO: filter by id_user
     groups = crud.get_groups(
-        db, id_group
+        db, skip, limit, id_group, name
     )
     if len(groups) == 0: 
         return ResponseModel(
@@ -195,6 +198,55 @@ def create_group(group: schemas.Group, db: Session = Depends(get_db)):
             detail="",
             dataModel=group
         )
+
+
+
+@app.get("/categories")
+def get_categories(
+    id_category: Optional[int] = None,
+    name: Optional[str] = None,
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    # TODO: filter by id_user
+    groups = crud.get_groups(
+        db, id_group
+    )
+    if len(groups) == 0: 
+        return ResponseModel(
+            code=1,
+            message="NOT FOUND",
+            detail="",
+            dataModel=None
+        )
+    print(groups)    
+    return ResponseModel(
+        code=0,
+        message="OK",
+        detail="",
+        dataModel=groups
+    )
+
+@app.post("/categories")
+def create_group(group: schemas.Group, db: Session = Depends(get_db)):
+    try:
+        crud.create_group(db=db, group=group)
+    except: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail="",
+            dataModel=None
+        )
+    else: 
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=group
+        )
+
 
 
 @app.get("/hello")
