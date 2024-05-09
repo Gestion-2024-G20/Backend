@@ -1,11 +1,11 @@
 from uuid import uuid4
 from sqlalchemy.orm import Session
 
-import schemas
-from schemas import *
-from models import *
+import fastapi_app.models as models
+from fastapi_app.models import *
+from fastapi_app.schemas import *
 
-def create_expenditure(db: Session, expenditure: schemas.ExpenditureBase):
+def create_expenditure(db: Session, expenditure: models.ExpenditureBase):
     db_expenditure = Expenditure(
         amount=expenditure.amount,
         id_group=expenditure.id_group,
@@ -36,7 +36,7 @@ def get_expenditures(
     expenditures = query.offset(skip).limit(limit).all()
 
     return [
-        schemas.Expenditure(
+        models.Expenditure(
             id_user=e.id_user,
             amount=e.amount,
             id_group=e.id_group,
@@ -47,7 +47,7 @@ def get_expenditures(
         for e in expenditures
     ]
 
-def create_user(db: Session, user: schemas.User):
+def create_user(db: Session, user: models.User):
 
     db_user = User(
         username= user.username,
@@ -89,7 +89,7 @@ def get_users(
     users = query.offset(skip).limit(limit).all()
 
     return [
-        schemas.User(
+        models.User(
             id_user=u.id_user,
             username=u.username, 
             password=u.password,
@@ -121,7 +121,7 @@ def get_user(
     user = query.first()
     if user :
 
-        return schemas.User(
+        return models.User(
                 id_user=user[0],
                 username=user[1], 
                 password=user[2],
@@ -151,7 +151,7 @@ def get_groups(
     groups = query.offset(skip).limit(limit).all()
     
     return [
-        schemas.Group(
+        models.Group(
             id_group=g.id_group,
             name=g.name,
             members_count=g.members_count,
@@ -161,7 +161,7 @@ def get_groups(
         for g in groups
     ]
     
-def create_group(db: Session, group: schemas.Group):
+def create_group(db: Session, group: models.Group):
     
     db_group = Group(
         time_created=group.time_created,

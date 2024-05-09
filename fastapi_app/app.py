@@ -2,14 +2,14 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
-import schemas
+import fastapi_app.models as models
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
 
-import crud, models, schemas
-from schemas import *
-from models import *
+import crud, fastapi_app.schemas as schemas, fastapi_app.models as models
+from fastapi_app.models import *
+from fastapi_app.schemas import *
 from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -31,12 +31,12 @@ def get_db():
     finally:
         db.close()
 
-models.Base.metadata.create_all(bind=engine)
+schemas.Base.metadata.create_all(bind=engine)
 
 
 
 @app.post("/expenditures")
-def create_expenditure(expenditure: schemas.ExpenditureBase, db: Session = Depends(get_db)):
+def create_expenditure(expenditure: models.ExpenditureBase, db: Session = Depends(get_db)):
     try:
         crud.create_expenditure(db=db, expenditure=expenditure)
     except: 
@@ -83,7 +83,7 @@ def read_expenditures(
 
 
 @app.post("/users")
-def create_user(user: schemas.User, db: Session = Depends(get_db)):
+def create_user(user: models.User, db: Session = Depends(get_db)):
     try:
         crud.create_user(db=db, user=user)
     except: 
@@ -181,7 +181,7 @@ def get_groups(
     )
 
 @app.post("/groups")
-def create_group(group: schemas.Group, db: Session = Depends(get_db)):
+def create_group(group: models.Group, db: Session = Depends(get_db)):
     try:
         crud.create_group(db=db, group=group)
     except: 
@@ -198,56 +198,6 @@ def create_group(group: schemas.Group, db: Session = Depends(get_db)):
             detail="",
             dataModel=group
         )
-
-
-
-@app.get("/categories")
-def get_categories(
-    id_category: Optional[int] = None,
-    name: Optional[str] = None,
-    skip: int = 0, 
-    limit: int = 100, 
-    db: Session = Depends(get_db)
-):
-    # TODO: filter by id_user
-    groups = crud.get_groups(
-        db, id_group
-    )
-    if len(groups) == 0: 
-        return ResponseModel(
-            code=1,
-            message="NOT FOUND",
-            detail="",
-            dataModel=None
-        )
-    print(groups)    
-    return ResponseModel(
-        code=0,
-        message="OK",
-        detail="",
-        dataModel=groups
-    )
-
-@app.post("/categories")
-def create_group(group: schemas.Group, db: Session = Depends(get_db)):
-    try:
-        crud.create_group(db=db, group=group)
-    except: 
-        return ResponseModel(
-            code=1,
-            message="ERROR",
-            detail="",
-            dataModel=None
-        )
-    else: 
-        return ResponseModel(
-            code=0,
-            message="OK",
-            detail="",
-            dataModel=group
-        )
-
-
 
 @app.get("/hello")
 async def read_root():
