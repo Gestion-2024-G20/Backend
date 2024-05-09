@@ -135,19 +135,19 @@ def get_user(
     user = query.first()
     if user :
 
-        return [schemas.User(
+        return schemas.User(
                 id_user=user[0],
                 username=user[1], 
                 password=user[2],
                 token=user[3],
                 mail=user[4],
                 celular=user[5]
-            ) ]
+            ) 
     else: 
-        return []
+        return None
 
 
-def get_user_groups(
+def get_groups(
     db: Session,
     id_user: int = None
 ):    
@@ -163,10 +163,10 @@ def get_user_groups(
         for g in groups
     ]
     
-def create_user_group(db: Session, user_group: schemas.GroupBase):
+def create_group(db: Session, group: schemas.GroupBase):
     db_group = Group(
         id_users="",
-        name=user_group.name,
+        name=group.name,
     )
     db.add(db_group)
     db.commit()

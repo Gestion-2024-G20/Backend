@@ -8,6 +8,7 @@ from typing import List, Optional
 
 
 import crud, models, schemas
+from models import ResponseModel
 from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -35,10 +36,25 @@ models.Base.metadata.create_all(bind=engine)
 
 @app.post("/expenditures")
 def create_expenditure(expenditure: schemas.ExpenditureBase, db: Session = Depends(get_db)):
-    return crud.create_expenditure(db=db, expenditure=expenditure)
+    try:
+        crud.create_expenditure(db=db, expenditure=expenditure)
+    except: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail="",
+            dataModel=None
+        )
+    else: 
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=expenditure
+        )
 
 
-@app.get("/expenditures/{id_group}", response_model=List[schemas.ExpenditureBase])
+@app.get("/expenditures/{id_group}", response_model=ResponseModel)
 def read_expenditures(
     id_group: int, id_user: Optional[int] = None,
     skip: int = 0, limit: int = 100, 
@@ -47,19 +63,45 @@ def read_expenditures(
     expenditures = crud.get_expenditures(
         db, id_group, id_user, skip=skip, limit=limit
     )
-
+    if len(expenditures) == 0: 
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="",
+                dataModel=None
+            )
     print(expenditures)
 
-    return expenditures
+    return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=expenditures
+        )
 
 
 
 @app.post("/users")
 def create_user(user: schemas.User, db: Session = Depends(get_db)):
-    return crud.create_user(db=db, user=user)
+    try:
+        crud.create_user(db=db, user=user)
+    except: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail="",
+            dataModel=None
+        )
+    else: 
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=user
+        )
 
 
-@app.get("/users", response_model=List[schemas.User])
+@app.get("/users", response_model=ResponseModel)
 def read_users(
     id_user: Optional[int] = None,
     username: Optional[str] = None,
@@ -70,40 +112,88 @@ def read_users(
     users = crud.get_users(
         db, skip, limit, id_user, username
     )
+    if len(users) == 0: 
+        return ResponseModel(
+            code=1,
+            message="NOT FOUND",
+            detail="",
+            dataModel=None
+        )
 
     print(users)
+    return ResponseModel(
+        code=0,
+        message="OK",
+        detail="",
+        dataModel=users
+    )
 
-    return users
-
-@app.get("/user_groups")
-def get_user_groups(
+@app.get("/groups")
+def get_groups(
     id_group: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
     # TODO: filter by id_user
-    groups = crud.get_user_groups(
+    groups = crud.get_groups(
         db, id_group
     )
-    
+    if len(groups) == 0: 
+        return ResponseModel(
+            code=1,
+            message="NOT FOUND",
+            detail="",
+            dataModel=None
+        )
     print(groups)    
-    return groups
+    return ResponseModel(
+        code=0,
+        message="OK",
+        detail="",
+        dataModel=groups
+    )
 
-@app.post("/user_groups")
-def create_user_group(user_group: schemas.GroupBase, db: Session = Depends(get_db)):
-    return crud.create_user_group(db=db, user_group=user_group)
+@app.post("/groups")
+def create_group(group: schemas.GroupBase, db: Session = Depends(get_db)):
+    try:
+        crud.create_group(db=db, group=group)
+    except: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail="",
+            dataModel=None
+        )
+    else: 
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=group
+        )
 
-@app.get("/user/{username}", response_model=List[schemas.User])
+
+@app.get("/user/{username}", response_model=ResponseModel)
 def read_users(
     username: str,
     db: Session = Depends(get_db)
 ):
-    users = crud.get_user(
+    user = crud.get_user(
         db, username
     )
-
-    print(users)
-
-    return users
+    if user is None: 
+        return ResponseModel(
+            code=1,
+            message="NOT FOUND",
+            detail="",
+            dataModel=None
+        )
+    print(user)
+    return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=user
+        )
 
 @app.get("/hello")
 async def read_root():
