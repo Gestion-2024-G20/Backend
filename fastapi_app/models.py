@@ -1,11 +1,9 @@
-from typing import TypeVar
-from pydantic import BaseModel
-from pyparsing import Any
+
+from typing import List
 from sqlalchemy import Column, Float, String, Integer, Sequence,  DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
-import datetime
 
 
 
@@ -40,11 +38,8 @@ class Group(Base):
     __tablename__ = "groups"
     
     id_group = Column(Integer, Sequence('group_id_seq'), primary_key=True)
-    id_users = Column(String)
     name = Column(String)
+    admins_usernames = Column(List[String])
+    members_usernames = Column(List[String])
+    categories = Column(List[String])
     time_created = Column(DateTime(timezone=True), server_default=func.now())
-class ResponseModel(BaseModel):
-    code:int
-    message:str
-    detail:str
-    dataModel:Any

@@ -2,7 +2,8 @@ from uuid import uuid4
 from sqlalchemy.orm import Session
 
 import schemas
-from models import Expenditure, User, Group
+from schemas import *
+from models import *
 
 def create_expenditure(db: Session, expenditure: schemas.ExpenditureBase):
     db_expenditure = Expenditure(
@@ -163,11 +164,32 @@ def get_groups(
         for g in groups
     ]
     
-def create_group(db: Session, group: schemas.GroupBase):
+def create_group(db: Session, group: schemas.Group):
+    groups = db.query(
+        Group.id_group,
+        Group.admins_usernames, 
+    	Group.members_usernames,
+    	Group.name, 
+    	Group.time_created, 
+    	Group.categories
+        ).all(); 
+    
+    maxid = 0
+    for g in groups:
+        if g.id_group > maxid: 
+            maxid = g.id_group
+
+    maxid = maxid + 1
+
     db_group = Group(
-        id_users="",
+        id_group=maxid,
+        admins_usernames=group.admins_usernames,
+        members_usernames=group.members_usernames,
+        categories=group.categories,
+        time_created=group.time_created,
         name=group.name,
     )
+    
     db.add(db_group)
     db.commit()
     db.refresh(db_group)

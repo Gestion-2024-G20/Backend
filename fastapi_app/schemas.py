@@ -1,6 +1,7 @@
 from pydantic import BaseModel
-from datetime import datetime
-from typing import Optional
+from typing import List
+
+from pyparsing import Any
 
 
 
@@ -22,9 +23,16 @@ class User(BaseModel):
 	mail : str
 	celular : str
 
-class GroupBase(BaseModel):
-	name : str
- 
-class Group(GroupBase):
+class Group(BaseModel):
 	id_group : int
+	name: str
+	admins_usernames: List[str]
+	members_usernames: List[str]
 	time_created: str
+	categories: List[str]
+
+class ResponseModel(BaseModel):
+    code:int
+    message:str
+    detail:str
+    dataModel: Any

@@ -8,7 +8,8 @@ from typing import List, Optional
 
 
 import crud, models, schemas
-from models import ResponseModel
+from schemas import *
+from models import *
 from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -128,6 +129,30 @@ def read_users(
         dataModel=users
     )
 
+@app.get("/user/{username}", response_model=ResponseModel)
+def read_users(
+    username: str,
+    db: Session = Depends(get_db)
+):
+    user = crud.get_user(
+        db, username
+    )
+    if user is None: 
+        return ResponseModel(
+            code=1,
+            message="NOT FOUND",
+            detail="",
+            dataModel=None
+        )
+    print(user)
+    return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=user
+        )
+
+
 @app.get("/groups")
 def get_groups(
     id_group: Optional[int] = None,
@@ -153,7 +178,7 @@ def get_groups(
     )
 
 @app.post("/groups")
-def create_group(group: schemas.GroupBase, db: Session = Depends(get_db)):
+def create_group(group: schemas.Group, db: Session = Depends(get_db)):
     try:
         crud.create_group(db=db, group=group)
     except: 
@@ -171,29 +196,6 @@ def create_group(group: schemas.GroupBase, db: Session = Depends(get_db)):
             dataModel=group
         )
 
-
-@app.get("/user/{username}", response_model=ResponseModel)
-def read_users(
-    username: str,
-    db: Session = Depends(get_db)
-):
-    user = crud.get_user(
-        db, username
-    )
-    if user is None: 
-        return ResponseModel(
-            code=1,
-            message="NOT FOUND",
-            detail="",
-            dataModel=None
-        )
-    print(user)
-    return ResponseModel(
-            code=0,
-            message="OK",
-            detail="",
-            dataModel=user
-        )
 
 @app.get("/hello")
 async def read_root():
