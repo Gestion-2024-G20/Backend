@@ -210,19 +210,19 @@ def get_group_members(
         for gm in groupMembers
     ]
     
-def create_group_members(db: Session, group_members: GroupMember):
+def create_group_member(db: Session, group_member: GroupMember):
     
-    db_group_members = GroupMember(
-        id_group=group_members.id_group,
-	    id_user=group_members.id_user,
-        is_admin=group_members.is_admin,
+    db_group_member = GroupMember(
+        id_group=group_member.id_group,
+	    id_user=group_member.id_user,
+        is_admin=group_member.is_admin,
     )
     
-    db.add(db_group_members)
+    db.add(db_group_member)
     db.commit()
-    db.refresh(db_group_members)
+    db.refresh(db_group_member)
     
-    return db_group_members
+    return db_group_member
 
 
 def get_category_shares(
