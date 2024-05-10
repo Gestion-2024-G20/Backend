@@ -37,7 +37,7 @@ schemas.Base.metadata.create_all(bind=engine)
 @app.post("/expenditures")
 def create_expenditure(expenditure: models.ExpenditureBase, db: Session = Depends(get_db)):
     try:
-        crud.create_expenditure(db=db, expenditure=expenditure)
+        expenditure = crud.create_expenditure(db=db, expenditure=expenditure)
     except Exception as e: 
         return ResponseModel(
             code=1,
@@ -93,7 +93,7 @@ def read_expenditures(
 @app.post("/users")
 def create_user(user: models.User, db: Session = Depends(get_db)):
     try:
-        crud.create_user(db=db, user=user)
+        user = crud.create_user(db=db, user=user)
     except Exception as e: 
         return ResponseModel(
             code=1,
@@ -217,7 +217,7 @@ def get_groups(
         )
 
 @app.post("/groups", response_model=ResponseModel)
-def create_group(group: models.Group, db: Session = Depends(get_db)):
+def create_group(group: models.GroupBase, db: Session = Depends(get_db)):
     try:
         group = crud.create_group(db=db, group=group)
     except Exception as e: 
@@ -335,7 +335,7 @@ def create_category_share(category_share: CategoryShare, db: Session = Depends(g
         return ResponseModel(
             code=1,
             message="ERROR",
-            detail=str(e),
+            detail=str(type(Exception)) + str(e),
             dataModel=None
         )
     else: 

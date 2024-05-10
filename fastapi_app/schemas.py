@@ -1,7 +1,8 @@
 
-from sqlalchemy import Boolean, Column, Float, ForeignKey, String, Integer, Sequence,  DateTime
+from sqlalchemy import Boolean, Column, Float, ForeignKey, ForeignKeyConstraint, String, Integer, Sequence,  DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 class Expenditure(Base):
@@ -27,7 +28,7 @@ class User(Base):
 class Group(Base):
     __tablename__ = "groups"
     
-    id_group = Column(Integer,primary_key=True)
+    id_group = Column(Integer, Sequence('group_id_seq'), primary_key=True)
     name = Column(String)
     members_count = Column(Integer)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
@@ -37,7 +38,6 @@ class GroupMember(Base):
     id_group = Column(Integer, ForeignKey('groups.id_group', ondelete='CASCADE'), primary_key=True)
     id_user = Column(Integer, ForeignKey('users.id_user', ondelete='CASCADE'), primary_key=True)
     is_admin = Column(Boolean)
-      
 class CategoryShare(Base):
     __tablename__ = "categoryShares"
      

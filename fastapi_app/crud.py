@@ -1,12 +1,10 @@
 from uuid import uuid4
 from sqlalchemy.orm import Session
 
-import fastapi_app.models as models
-from fastapi_app.models import *
-from fastapi_app.schemas import *
+from fastapi_app import schemas, models
 
 def create_expenditure(db: Session, expenditure: models.ExpenditureBase):
-    db_expenditure = Expenditure(
+    db_expenditure = schemas.Expenditure(
         amount=expenditure.amount,
         id_group=expenditure.id_group,
         description=expenditure.description
@@ -23,11 +21,7 @@ def get_expenditures(
     skip: int = 0, limit: int = 100
 ):
     query = db.query(
-    	Expenditure.id_user,
-    	Expenditure.amount,
-    	Expenditure.id_group, 
-    	Expenditure.description, 
-    	Expenditure.time_created
+    	schemas.Expenditure()
     ).filter_by(id_group=id_group)
 
     if id_user is not None:
@@ -49,7 +43,7 @@ def get_expenditures(
 
 def create_user(db: Session, user: models.User):
 
-    db_user = User(
+    db_user = schemas.User(
         username= user.username,
         password=user.password,
         token=user.token,
@@ -71,14 +65,7 @@ def get_users(
     username: str = None,
 
 ):
-    query = db.query(
-    	User.id_user,
-        User.username, 
-    	User.password,
-    	User.token, 
-    	User.mail, 
-    	User.celular
-    )
+    query = db.query(schemas.User)
 
     if id_user is not None:
         query = query.filter_by(id_user=id_user)
@@ -106,14 +93,7 @@ def get_user(
 
 ):
     print("query ")
-    query = db.query(
-    	User.id_user,
-        User.username, 
-    	User.password,
-    	User.token, 
-    	User.mail, 
-    	User.celular
-    )
+    query = db.query(schemas.User())
 
 
     query = query.filter_by(username=username)
@@ -138,13 +118,17 @@ def get_groups(
     skip: int, 
     limit: int, 
     id_group: int,
+    name: str, 
     members_count: int, 
     time_created: str
 ):    
-    query = db.query(Group)
+    query = db.query(schemas.Group)
 
     if id_group is not None:
         query = query.filter_by(id_group=id_group)
+
+    if name is not None:
+        query = query.filter_by(name=name)
 
     if members_count is not None:
         query = query.filter_by(members_count=members_count)
@@ -165,12 +149,11 @@ def get_groups(
         for g in groups
     ]
     
-def create_group(db: Session, group: models.Group):
+def create_group(db: Session, group: models.GroupBase):
     
-    db_group = Group(
+    db_group = schemas.Group(
         name=group.name,
 	    members_count= group.members_count,
-        time_created=group.time_created,
     )
     
     db.add(db_group)
@@ -187,7 +170,7 @@ def get_group_members(
     id_user: int, 
     is_admin: bool
 ):    
-    query = db.query(GroupMember)
+    query = db.query(schemas.GroupMember)
 
     if id_group is not None:
         query = query.filter_by(id_group=id_group)
@@ -201,7 +184,7 @@ def get_group_members(
     groupMembers = query.offset(skip).limit(limit).all()
     
     return [
-        GroupMember(
+        models.GroupMember(
             id_group=gm.id_group,
             id_user=gm.id_user,
             is_admin=gm.is_admin,
@@ -210,13 +193,21 @@ def get_group_members(
         for gm in groupMembers
     ]
     
-def create_group_member(db: Session, group_member: GroupMember):
+def create_group_member(db: Session, group_member: models.GroupMember):
     
-    db_group_member = GroupMember(
+    db_group_member = schemas.GroupMember(
         id_group=group_member.id_group,
 	    id_user=group_member.id_user,
         is_admin=group_member.is_admin,
     )
+    group = db.query(schemas.Group).filter_by(id_group=group_member.id_group).first()
+    if group is None: 
+         raise KeyError("group_id not found: Group does not exist")
+    
+    user = db.query(schemas.User).filter_by(id_user=group_member.id_user).first()
+    if user is None: 
+         raise KeyError("user_id not found: User does not exist")
+    group.members_count += 1
     
     db.add(db_group_member)
     db.commit()
@@ -234,7 +225,7 @@ def get_category_shares(
     category_name: str, 
     share_percentage: int
 ):    
-    query = db.query(CategoryShare)
+    query = db.query(schemas.CategoryShare)
 
     if id_group is not None:
         query = query.filter_by(id_group=id_group)
@@ -251,7 +242,7 @@ def get_category_shares(
     category_shares = query.offset(skip).limit(limit).all()
     
     return [
-        CategoryShare(
+        models.CategoryShare(
             id_group=cs.id_group,
             id_user=cs.id_user,
             category_name=cs.category_name,
@@ -261,9 +252,9 @@ def get_category_shares(
         for cs in category_shares
     ]
         
-def create_category_share(db: Session, category_share: CategoryShare):
+def create_category_share(db: Session, category_share: models.CategoryShare):
     
-    db_category_share = CategoryShare(
+    db_category_share = schemas.CategoryShare(
             id_group=category_share.id_group,
             id_user=category_share.id_user,
             category_name=category_share.category_name,

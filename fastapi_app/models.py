@@ -1,6 +1,6 @@
-from pydantic import BaseModel
 from typing import List
 
+from pydantic import BaseModel
 from pyparsing import Any
 
 
@@ -23,10 +23,11 @@ class User(BaseModel):
 	mail : str
 	celular : str
 
-class Group(BaseModel):
+class GroupBase(BaseModel):
 	id_group : int
 	name: str
 	members_count: int
+class Group(GroupBase):
 	time_created: str
 class GroupMember(BaseModel):
 	id_group : int
@@ -36,7 +37,7 @@ class CategoryShare(BaseModel):
     id_group : int 
     id_user : int
     category_name : str
-    name : str
+    share_percentage : int
 
 class ResponseModel(BaseModel):
     code:int
