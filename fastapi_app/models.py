@@ -28,15 +28,14 @@ class Group(BaseModel):
 	name: str
 	members_count: int
 	time_created: str
-class GroupMembers(BaseModel):
+class GroupMember(BaseModel):
 	id_group : int
 	id_user : int
-	admin : bool
-class GroupCategories(BaseModel):
+	is_admin : bool
+class CategoryShare(BaseModel):
     id_group : int 
-    id_category : int
-class Category(BaseModel):
-    id_category : int
+    id_user : int
+    category_name : str
     name : str
 
 class ResponseModel(BaseModel):

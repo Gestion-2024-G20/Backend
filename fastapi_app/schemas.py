@@ -31,19 +31,17 @@ class Group(Base):
     name = Column(String)
     members_count = Column(Integer)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
-class GroupMembers(Base):
+class GroupMember(Base):
     __tablename__ = "groupMembers"
       
     id_group = Column(Integer, ForeignKey('groups.id_group', ondelete='CASCADE'), primary_key=True)
     id_user = Column(Integer, ForeignKey('users.id_user', ondelete='CASCADE'), primary_key=True)
-    admin = Column(Boolean)
-class GroupCategories(Base):
-    __tablename__ = "groupCategories"
+    is_admin = Column(Boolean)
       
-    id_group = Column(Integer, ForeignKey('groups.id_group', ondelete='CASCADE'), primary_key=True)
-    id_category = Column(Integer, ForeignKey('categories.id_category', ondelete='CASCADE'), primary_key=True)
-class Category(Base):
-    __tablename__ = "categories"
+class CategoryShare(Base):
+    __tablename__ = "categoryShares"
      
-    id_category = Column(Integer,  Sequence('categoryid_seq'), primary_key=True)
-    name = Column(String)
+    id_group = Column(Integer, ForeignKey('groups.id_group', ondelete='CASCADE'), primary_key=True)
+    id_user = Column(Integer,  ForeignKey('users.id_user', ondelete='CASCADE'), Sequence('id_user'), primary_key=True)
+    category_name = Column(String, primary_key=True)
+    share_percentage = Column(Integer)

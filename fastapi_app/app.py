@@ -157,13 +157,15 @@ def read_users(
 def get_groups(
     id_group: Optional[int] = None,
     name: Optional[str] = None,
+    members_count: Optional[int] = None, 
+    time_created: Optional[str] = None, 
     skip: int = 0, 
     limit: int = 100, 
     db: Session = Depends(get_db)
 ):
     # TODO: filter by id_user
     groups = crud.get_groups(
-        db, skip, limit, id_group, name
+        db, skip, limit, id_group, name, members_count, time_created
     )
     if len(groups) == 0: 
         return ResponseModel(
@@ -197,6 +199,101 @@ def create_group(group: models.Group, db: Session = Depends(get_db)):
             message="OK",
             detail="",
             dataModel=group
+        )
+
+@app.get("/groupMembers")
+def get_group_members(
+    id_group: Optional[int] = None,
+    id_user: Optional[int] = None,
+    is_admin: Optional[bool] = None, 
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    # TODO: filter by id_user
+    group_members = crud.get_group_members(
+        db, skip, limit, id_group, id_user, is_admin
+    )
+    if len(group_members) == 0: 
+        return ResponseModel(
+            code=1,
+            message="NOT FOUND",
+            detail="",
+            dataModel=None
+        )
+    print(group_members)    
+    return ResponseModel(
+        code=0,
+        message="OK",
+        detail="",
+        dataModel=group_members
+    )
+
+@app.post("/groupMembers")
+def create_group(group_members: GroupMember, db: Session = Depends(get_db)):
+    try:
+        crud.create_group_members(db, group_members)
+    except: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail="",
+            dataModel=None
+        )
+    else: 
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=group_members
+        )
+    
+@app.get("/categoryShares")
+def get_category_shares(
+    id_group: Optional[int] = None,
+    id_user: Optional[int] = None,
+    category_name: Optional[str] = None, 
+    share_percentage: Optional[int] = None, 
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    # TODO: filter by id_user
+    category_shares = crud.get_category_shares(
+        db, skip, limit, id_group, id_user, category_name, share_percentage
+    )
+    if len(category_shares) == 0: 
+        return ResponseModel(
+            code=1,
+            message="NOT FOUND",
+            detail="",
+            dataModel=None
+        )
+    print(category_shares)    
+    return ResponseModel(
+        code=0,
+        message="OK",
+        detail="",
+        dataModel=category_shares
+    )
+
+@app.post("/categoryShares")
+def create_category_share(category_share: CategoryShare, db: Session = Depends(get_db)):
+    try:
+        crud.create_category_share(db, category_share)
+    except: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail="",
+            dataModel=None
+        )
+    else: 
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="",
+            dataModel=category_share
         )
 
 @app.get("/hello")
