@@ -120,8 +120,9 @@ def delete_group(group_id: int, db: Session = Depends(get_db)):
 @router.put("/groups/{group_id}", response_model=ResponseModel)
 def update_group(group_id: int, group: GroupBase, db: Session = Depends(get_db)):
     try:
-        updated_group = group_service.update_group(db=db, group_id=group_id, group=group)
+        updated_group = group_service.update_group(db, group_id, group)
         if not updated_group:
+            print("notfound")
             return ResponseModel(
                 code=1,
                 message="NOT FOUND",
@@ -135,6 +136,8 @@ def update_group(group_id: int, group: GroupBase, db: Session = Depends(get_db))
             dataModel=updated_group
         )
     except Exception as e:
+        print(e)
+
         return ResponseModel(
             code=1,
             message="ERROR",
