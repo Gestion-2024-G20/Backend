@@ -42,8 +42,9 @@ def get_expenditures(
         for e in expenditures
     ]
 
+"""
 def update_expenditure(db: Session, expenditure_id: int, updated_expenditure: ExpenditureBase):
-    db_expenditure = db.query(Expenditure).filter_by(id=expenditure_id).first()
+    db_expenditure = db.query(Expenditure).filter_by(id_expenditure=expenditure_id).first()
     if db_expenditure:
         db_expenditure.amount = updated_expenditure.amount
         db_expenditure.id_group = updated_expenditure.id_group
@@ -52,9 +53,9 @@ def update_expenditure(db: Session, expenditure_id: int, updated_expenditure: Ex
         db.refresh(db_expenditure)
         return db_expenditure
     return None
-
+"""
 def delete_expenditure(db: Session, expenditure_id: int):
-    db_expenditure = db.query(Expenditure).filter_by(id=expenditure_id).first()
+    db_expenditure = db.query(Expenditure).filter_by(id_expenditure=expenditure_id).first()
     if db_expenditure:
         db.delete(db_expenditure)
         db.commit()

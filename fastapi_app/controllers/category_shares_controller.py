@@ -60,7 +60,7 @@ def create_category_share(category_share: CategoryShare, db: Session = Depends(g
             dataModel=None
         )
 
-@router.delete("/categoryShares/{category_share_id}", response_model=ResponseModel)
+@router.delete("/categoryShares", response_model=ResponseModel)
 def delete_category_share(category_share_id: int, db: Session = Depends(get_db)):
     try:
         deleted_category_share = category_share_service.delete_category_share(db=db, category_share_id=category_share_id)

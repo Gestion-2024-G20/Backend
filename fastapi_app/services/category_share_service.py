@@ -46,13 +46,20 @@ def create_category_share(db: Session, category_share: models.CategoryShare):
             category_name=category_share.category_name,
             share_percentage=category_share.share_percentage
     )
+    group = db.query(schemas.Group).filter_by(id_group=category_share.id_group).first()
+    if group is None: 
+         raise KeyError("group_id not found: Group does not exist")
     
+    user = db.query(schemas.User).filter_by(id_user=category_share.id_user).first()
+    if user is None: 
+         raise KeyError("user_id not found: User does not exist")
+    group.members_count += 1
     db.add(db_category_share)
     db.commit()
     db.refresh(db_category_share)
     
     return db_category_share
-
+""" 
 def update_category_share(db: Session, category_share_id: int, updated_category_share: models.CategoryShare):
     db_category_share = db.query(schemas.CategoryShare).filter_by(id=category_share_id).first()
     if db_category_share:
@@ -64,9 +71,9 @@ def update_category_share(db: Session, category_share_id: int, updated_category_
         db.refresh(db_category_share)
         return db_category_share
     return None
-
+"""
 def delete_category_share(db: Session, category_share_id: int):
-    db_category_share = db.query(schemas.CategoryShare).filter_by(id=category_share_id).first()
+    db_category_share = db.query(schemas.CategoryShare).filter_by(id_cs=category_share_id).first()
     if db_category_share:
         db.delete(db_category_share)
         db.commit()

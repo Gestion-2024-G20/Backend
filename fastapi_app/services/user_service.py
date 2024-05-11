@@ -84,6 +84,17 @@ def update_user(db: Session, user_id: int, updated_user: models.User):
 def delete_user(db: Session, user_id: int):
     db_user = db.query(schemas.User).filter_by(id_user=user_id).first()
     if db_user:
+
+        db_group_member = db.query(schemas.GroupMember).filter_by(id_user=user_id).all()
+        if db_group_member:
+            for gm in db_group_member:
+                db.delete(gm)
+
+        db_category_share = db.query(schemas.CategoryShare).filter_by(id_user=user_id).first()
+        if db_category_share:
+            for cs in db_category_share:
+                db.delete(cs)
+
         db.delete(db_user)
         db.commit()
         return True

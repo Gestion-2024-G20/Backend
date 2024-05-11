@@ -64,6 +64,18 @@ def update_group(db: Session, group_id: int, updated_group: models.GroupBase):
 def delete_group(db: Session, group_id: int):
     db_group = db.query(schemas.Group).filter_by(id_group=group_id).first()
     if db_group:
+
+        db_group_member = db.query(schemas.GroupMember).filter_by(id_group=group_id).all()
+        if db_group_member is None:
+            for gm in db_group_member:
+                db.delete(gm)
+
+        db_category_share = db.query(schemas.CategoryShare).filter_by(id_group=group_id).first()
+        if db_category_share is None:  
+            for cs in db_category_share:
+                db.delete(cs)
+
+
         db.delete(db_group)
         db.commit()
         return True

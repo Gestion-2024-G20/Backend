@@ -54,7 +54,7 @@ def create_group_member(db: Session, group_member: models.GroupMember):
     db.refresh(db_group_member)
     
     return db_group_member
-
+""" 
 def update_group_member(db: Session, group_member_id: int, updated_group_member: models.GroupMember):
     db_group_member = db.query(schemas.GroupMember).filter_by(id=group_member_id).first()
     if db_group_member:
@@ -65,9 +65,9 @@ def update_group_member(db: Session, group_member_id: int, updated_group_member:
         db.refresh(db_group_member)
         return db_group_member
     return None
-
+ """
 def delete_group_member(db: Session, group_member_id: int):
-    db_group_member = db.query(schemas.GroupMember).filter_by(id=group_member_id).first()
+    db_group_member = db.query(schemas.GroupMember).filter_by(id_gm=group_member_id).first()
     if db_group_member:
         db.delete(db_group_member)
         db.commit()

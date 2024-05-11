@@ -10,6 +10,7 @@ class ExpenditureBase(BaseModel):
 	amount: float
 	id_group: int
 	description : str
+	id_expenditure : int
 
 class Expenditure(ExpenditureBase):
 	time_created: str
@@ -30,10 +31,12 @@ class GroupBase(BaseModel):
 class Group(GroupBase):
 	time_created: str
 class GroupMember(BaseModel):
+	id_gm : int
 	id_group : int
 	id_user : int
 	is_admin : bool
 class CategoryShare(BaseModel):
+    id_cs : int 
     id_group : int 
     id_user : int
     category_name : str
