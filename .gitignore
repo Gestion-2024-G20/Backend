@@ -1,4 +1,5 @@
 fastapi_app/__pycache__
+fastapi_app/controllers/__pycache__
 fastapi_app/*.db
 
 *.db
