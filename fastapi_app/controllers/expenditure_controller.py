@@ -1,31 +1,29 @@
 from typing import Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-import crud
+from fastapi_app.services import expenditure_service
 from fastapi_app.get_db import get_db
-from fastapi_app.schemas import Expenditure
 from fastapi_app.models import ExpenditureBase, ResponseModel
 
 router = APIRouter()
 
 
-@router.post("/expenditures")
+@router.post("/expenditures", response_model=ResponseModel)
 def create_expenditure(expenditure: ExpenditureBase, db: Session = Depends(get_db)):
     try:
-        expenditure = crud.create_expenditure(db=db, expenditure=expenditure)
+        created_expenditure = expenditure_service.create_expenditure(db=db, expenditure=expenditure)
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Expenditure created successfully",
+            dataModel=created_expenditure
+        )
     except Exception as e: 
         return ResponseModel(
             code=1,
             message="ERROR",
-            detail=e,
+            detail=str(e),
             dataModel=None
-        )
-    else: 
-        return ResponseModel(
-            code=0,
-            message="OK",
-            detail="",
-            dataModel=expenditure
         )
 
 
@@ -36,8 +34,21 @@ def read_expenditures(
     db: Session = Depends(get_db)
 ):
     try:
-        expenditures = crud.get_expenditures(
+        expenditures = expenditure_service.get_expenditures(
             db, id_group, id_user, skip=skip, limit=limit
+        )
+        if not expenditures:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No expenditures found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Expenditures retrieved successfully",
+            dataModel=expenditures
         )
     except Exception as e: 
         return ResponseModel(
@@ -46,20 +57,57 @@ def read_expenditures(
             detail=str(e),
             dataModel=None
         )
-    else: 
-        if len(expenditures) == 0: 
-                return ResponseModel(
-                    code=1,
-                    message="NOT FOUND",
-                    detail="",
-                    dataModel=None
-                )
-        print(expenditures)
 
-        return ResponseModel(
-                code=0,
-                message="OK",
-                detail="",
-                dataModel=expenditures
+
+@router.delete("/expenditures/{expenditure_id}", response_model=ResponseModel)
+def delete_expenditure(expenditure_id: int, db: Session = Depends(get_db)):
+    try:
+        deleted_expenditure = expenditure_service.delete_expenditure(db=db, expenditure_id=expenditure_id)
+        if not deleted_expenditure:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Expenditure not found",
+                dataModel=None
             )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Expenditure deleted successfully",
+            dataModel=None
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
 
+
+@router.put("/expenditures/{expenditure_id}", response_model=ResponseModel)
+def update_expenditure(
+    expenditure_id: int, expenditure: ExpenditureBase, db: Session = Depends(get_db)
+):
+    try:
+        updated_expenditure = expenditure_service.update_expenditure(db=db, expenditure_id=expenditure_id, expenditure=expenditure)
+        if not updated_expenditure:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Expenditure not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Expenditure updated successfully",
+            dataModel=updated_expenditure
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )

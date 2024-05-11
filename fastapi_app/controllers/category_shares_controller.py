@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-import crud
+from fastapi_app.services import category_share_service
 from fastapi_app.get_db import get_db
 from fastapi_app.models import CategoryShare, ResponseModel
 
@@ -18,8 +18,21 @@ def get_category_shares(
     db: Session = Depends(get_db)
 ):
     try:
-        category_shares = crud.get_category_shares(
+        category_shares = category_share_service.get_category_shares(
             db, skip, limit, id_group, id_user, category_name, share_percentage
+        )
+        if not category_shares:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No category shares found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Category shares retrieved successfully",
+            dataModel=category_shares
         )
     except Exception as e: 
         return ResponseModel(
@@ -28,37 +41,73 @@ def get_category_shares(
             detail=str(e),
             dataModel=None
         )
-    else: 
-        if len(category_shares) == 0: 
-            return ResponseModel(
-                code=1,
-                message="NOT FOUND",
-                detail="",
-                dataModel=None
-            )
-        print(category_shares)    
-        return ResponseModel(
-            code=0,
-            message="OK",
-            detail="",
-            dataModel=category_shares
-        )
 
 @router.post("/categoryShares", response_model=ResponseModel)
 def create_category_share(category_share: CategoryShare, db: Session = Depends(get_db)):
     try:
-        category_share = crud.create_category_share(db, category_share)
+        created_category_share = category_share_service.create_category_share(db=db, category_share=category_share)
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Category share created successfully",
+            dataModel=created_category_share
+        )
     except Exception as e: 
         return ResponseModel(
             code=1,
             message="ERROR",
-            detail=str(type(Exception)) + str(e),
+            detail=str(e),
             dataModel=None
         )
-    else: 
+
+@router.delete("/categoryShares/{category_share_id}", response_model=ResponseModel)
+def delete_category_share(category_share_id: int, db: Session = Depends(get_db)):
+    try:
+        deleted_category_share = category_share_service.delete_category_share(db=db, category_share_id=category_share_id)
+        if not deleted_category_share:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Category share not found",
+                dataModel=None
+            )
         return ResponseModel(
             code=0,
             message="OK",
-            detail="",
-            dataModel=category_share
+            detail="Category share deleted successfully",
+            dataModel=None
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+@router.put("/categoryShares/{category_share_id}", response_model=ResponseModel)
+def update_category_share(
+    category_share_id: int, category_share: CategoryShare, db: Session = Depends(get_db)
+):
+    try:
+        updated_category_share = category_share_service.update_category_share(db=db, category_share_id=category_share_id, category_share=category_share)
+        if not updated_category_share:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Category share not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Category share updated successfully",
+            dataModel=updated_category_share
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
         )

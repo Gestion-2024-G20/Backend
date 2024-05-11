@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-import crud
+from fastapi_app.services import group_member_service
 from fastapi_app.get_db import get_db
 from fastapi_app.models import GroupMember, ResponseModel
 
@@ -18,8 +18,21 @@ def get_group_members(
     db: Session = Depends(get_db)
 ):
     try:
-        group_members = crud.get_group_members(
+        group_members = group_member_service.get_group_members(
             db, skip, limit, id_group, id_user, is_admin
+        )
+        if not group_members:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No group members found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Group members retrieved successfully",
+            dataModel=group_members
         )
     except Exception as e: 
         return ResponseModel(
@@ -27,27 +40,18 @@ def get_group_members(
             message="ERROR",
             detail=str(e),
             dataModel=None
-        )
-    else: 
-        if len(group_members) == 0: 
-            return ResponseModel(
-                code=1,
-                message="NOT FOUND",
-                detail="",
-                dataModel=None
-            )
-        print(group_members)    
-        return ResponseModel(
-            code=0,
-            message="OK",
-            detail="",
-            dataModel=group_members
         )
 
 @router.post("/groupMember", response_model=ResponseModel)
 def create_group_member(group_member: GroupMember, db: Session = Depends(get_db)):
     try:
-        group_member =crud.create_group_member(db, group_member)
+        created_group_member = group_member_service.create_group_member(db=db, group_member=group_member)
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Group member created successfully",
+            dataModel=created_group_member
+        )
     except Exception as e: 
         return ResponseModel(
             code=1,
@@ -55,11 +59,55 @@ def create_group_member(group_member: GroupMember, db: Session = Depends(get_db)
             detail=str(e),
             dataModel=None
         )
-    else: 
+
+@router.delete("/groupMembers/{group_member_id}", response_model=ResponseModel)
+def delete_group_member(group_member_id: int, db: Session = Depends(get_db)):
+    try:
+        deleted_group_member = group_member_service.delete_group_member(db=db, group_member_id=group_member_id)
+        if not deleted_group_member:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Group member not found",
+                dataModel=None
+            )
         return ResponseModel(
             code=0,
             message="OK",
-            detail="",
-            dataModel=group_member
+            detail="Group member deleted successfully",
+            dataModel=None
         )
- 
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+@router.put("/groupMembers/{group_member_id}", response_model=ResponseModel)
+def update_group_member(
+    group_member_id: int, group_member: GroupMember, db: Session = Depends(get_db)
+):
+    try:
+        updated_group_member = group_member_service.update_group_member(db=db, group_member_id=group_member_id, group_member=group_member)
+        if not updated_group_member:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Group member not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Group member updated successfully",
+            dataModel=updated_group_member
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )

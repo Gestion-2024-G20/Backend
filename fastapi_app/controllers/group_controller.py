@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-import crud
+from fastapi_app.services import group_service
 from fastapi_app.get_db import get_db
 from fastapi_app.models import GroupBase, ResponseModel
 
@@ -18,8 +18,21 @@ def get_groups(
     db: Session = Depends(get_db)
 ):
     try:
-        groups = crud.get_groups(
+        groups = group_service.get_groups(
             db, skip, limit, id_group, name, members_count, time_created
+        )
+        if not groups:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No groups found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Groups retrieved successfully",
+            dataModel=groups
         )
     except Exception as e: 
         return ResponseModel(
@@ -27,27 +40,18 @@ def get_groups(
             message="ERROR",
             detail=str(e),
             dataModel=None
-        )
-    else: 
-        if len(groups) == 0: 
-            return ResponseModel(
-                code=1,
-                message="NOT FOUND",
-                detail="",
-                dataModel=None
-            )
-        print(groups)    
-        return ResponseModel(
-            code=0,
-            message="OK",
-            detail="",
-            dataModel=groups
         )
 
 @router.post("/groups", response_model=ResponseModel)
 def create_group(group: GroupBase, db: Session = Depends(get_db)):
     try:
-        group = crud.create_group(db=db, group=group)
+        group = group_service.create_group(db=db, group=group)
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Group created successfully",
+            dataModel=group
+        )
     except Exception as e: 
         return ResponseModel(
             code=1,
@@ -55,10 +59,53 @@ def create_group(group: GroupBase, db: Session = Depends(get_db)):
             detail=str(e),
             dataModel=None
         )
-    else: 
+
+@router.delete("/groups/{group_id}", response_model=ResponseModel)
+def delete_group(group_id: int, db: Session = Depends(get_db)):
+    try:
+        deleted_group = group_service.delete_group(db=db, group_id=group_id)
+        if not deleted_group:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Group not found",
+                dataModel=None
+            )
         return ResponseModel(
             code=0,
             message="OK",
-            detail="",
-            dataModel=group
+            detail="Group deleted successfully",
+            dataModel=None
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+@router.put("/groups/{group_id}", response_model=ResponseModel)
+def update_group(group_id: int, group: GroupBase, db: Session = Depends(get_db)):
+    try:
+        updated_group = group_service.update_group(db=db, group_id=group_id, group=group)
+        if not updated_group:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Group not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Group updated successfully",
+            dataModel=updated_group
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
         )

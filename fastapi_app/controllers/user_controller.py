@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-import crud
+from fastapi_app.services import user_service
 from fastapi_app.get_db import get_db
 from fastapi_app.models import User, ResponseModel
 
@@ -11,20 +11,19 @@ router = APIRouter()
 @router.post("/users")
 def create_user(user: User, db: Session = Depends(get_db)):
     try:
-        user = crud.create_user(db=db, user=user)
+        user = user_service.create_user(db=db, user=user)
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="User created successfully",
+            dataModel=user
+        )
     except Exception as e: 
         return ResponseModel(
             code=1,
             message="ERROR",
             detail=str(e),
             dataModel=None
-        )
-    else: 
-        return ResponseModel(
-            code=0,
-            message="OK",
-            detail="",
-            dataModel=user
         )
 
 
@@ -37,8 +36,21 @@ def read_users(
     db: Session = Depends(get_db)
 ):
     try:
-        users = crud.get_users(
+        users = user_service.get_users(
             db, skip, limit, id_user, username
+        )
+        if not users:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No users found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Users retrieved successfully",
+            dataModel=users
         )
     except Exception as e: 
         return ResponseModel(
@@ -47,31 +59,29 @@ def read_users(
             detail=str(e),
             dataModel=None
         )
-    else: 
-        if len(users) == 0: 
-            return ResponseModel(
-                code=1,
-                message="NOT FOUND",
-                detail="",
-                dataModel=None
-            )
 
-        print(users)
-        return ResponseModel(
-            code=0,
-            message="OK",
-            detail="",
-            dataModel=users
-        )
 
 @router.get("/user/{username}", response_model=ResponseModel)
-def read_users(
+def read_user_by_username(
     username: str,
     db: Session = Depends(get_db)
 ):
     try:
-        user = crud.get_user(
+        user = user_service.get_user(
             db, username
+        )
+        if not user:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="User not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="User retrieved successfully",
+            dataModel=user
         )
     except Exception as e: 
         return ResponseModel(
@@ -80,18 +90,62 @@ def read_users(
             detail=str(e),
             dataModel=None
         )
-    else: 
-        if user is None: 
+
+
+@router.delete("/users/{user_id}")
+def delete_user(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+    try:
+        deleted_user = user_service.delete_user(db=db, user_id=user_id)
+        if not deleted_user:
             return ResponseModel(
                 code=1,
                 message="NOT FOUND",
-                detail="",
+                detail="User not found",
                 dataModel=None
             )
-        print(user)
         return ResponseModel(
-                code=0,
-                message="OK",
-                detail="",
-                dataModel=user
+            code=0,
+            message="OK",
+            detail="User deleted successfully",
+            dataModel=None
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+
+@router.put("/users/{user_id}")
+def update_user(
+    user_id: int,
+    user: User,
+    db: Session = Depends(get_db)
+):
+    try:
+        updated_user = user_service.update_user(db=db, user_id=user_id, user=user)
+        if not updated_user:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="User not found",
+                dataModel=None
             )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="User updated successfully",
+            dataModel=updated_user
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
