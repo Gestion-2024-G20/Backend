@@ -41,6 +41,38 @@ def get_groups(
             detail=str(e),
             dataModel=None
         )
+    
+@router.get("/groups/{group_id}", response_model=ResponseModel)
+def read_group_by_id(
+    group_id: int,
+    db: Session = Depends(get_db)
+):
+    try:
+        group = group_service.get_group_by_id(
+            db, group_id
+        )
+        if not group:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Group not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Group retrieved successfully",
+            dataModel=group
+        )
+    except Exception as e: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+
 
 @router.post("/groups", response_model=ResponseModel)
 def create_group(group: GroupBase, db: Session = Depends(get_db)):

@@ -35,9 +35,9 @@ class CategoryShare(Base):
     __tablename__ = "categoryShares"
      
     id_cs = Column(Integer, Sequence('cs_id_seq'), name='id_cs', primary_key=True, index=True)
-    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group', primary_key=True)
-    id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user', primary_key=True)
-    category_name = Column(String, primary_key=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
+    id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')
+    category_name = Column(String)
     share_percentage = Column(Integer)
 
 
@@ -45,7 +45,7 @@ class GroupMember(Base):
     __tablename__ = "groupMembers"
       
     id_gm = Column(Integer, Sequence('gm_id_seq'), name='id_gm', primary_key=True, index=True)
-    id_group = Column(Integer, ForeignKey('groups.id_group'),name='id_group', primary_key=True)
-    id_user = Column(Integer, ForeignKey('users.id_user'),name='id_user', primary_key=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'),name='id_group')
+    id_user = Column(Integer, ForeignKey('users.id_user'),name='id_user')
     is_admin = Column(Boolean)
 

@@ -25,6 +25,7 @@ def get_group_members(
     
     return [
         models.GroupMember(
+            id_gm=gm.id_gm,
             id_group=gm.id_group,
             id_user=gm.id_user,
             is_admin=gm.is_admin,

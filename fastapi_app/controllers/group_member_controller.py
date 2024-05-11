@@ -53,6 +53,7 @@ def create_group_member(group_member: GroupMember, db: Session = Depends(get_db)
             dataModel=created_group_member
         )
     except Exception as e: 
+        print(e)
         return ResponseModel(
             code=1,
             message="ERROR",

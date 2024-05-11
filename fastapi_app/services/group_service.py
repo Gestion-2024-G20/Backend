@@ -37,7 +37,24 @@ def get_groups(
 
         for g in groups
     ]
+
+
+def get_group_by_id(
+    db: Session,
+    id_group: int,
+):    
+    group = db.query(schemas.Group).filter_by(id_group=id_group).first()
+
     
+    return models.Group(
+            id_group=group.id_group,
+            name=group.name,
+            members_count=group.members_count,
+            time_created=group.time_created.strftime('%Y-%m-%d %H:%M:%S'),
+        ) 
+    
+    
+
 def create_group(db: Session, group: models.GroupBase):
     
     db_group = schemas.Group(
@@ -66,12 +83,12 @@ def delete_group(db: Session, group_id: int):
     if db_group:
 
         db_group_member = db.query(schemas.GroupMember).filter_by(id_group=group_id).all()
-        if db_group_member is None:
+        if db_group_member:
             for gm in db_group_member:
                 db.delete(gm)
 
         db_category_share = db.query(schemas.CategoryShare).filter_by(id_group=group_id).first()
-        if db_category_share is None:  
+        if db_category_share:  
             for cs in db_category_share:
                 db.delete(cs)
 
