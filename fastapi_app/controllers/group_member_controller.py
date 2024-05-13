@@ -64,7 +64,7 @@ def create_group_member(group_member: GroupMember, db: Session = Depends(get_db)
 @router.delete("/groupMembers/{group_member_id}", response_model=ResponseModel)
 def delete_group_member(group_member_id: int, db: Session = Depends(get_db)):
     try:
-        deleted_group_member = group_member_service.delete_group_member(db=db, group_member_id=group_member_id)
+        deleted_group_member = group_member_service.delete_group_member(db, group_member_id)
         if not deleted_group_member:
             return ResponseModel(
                 code=1,
@@ -76,7 +76,7 @@ def delete_group_member(group_member_id: int, db: Session = Depends(get_db)):
             code=0,
             message="OK",
             detail="Group member deleted successfully",
-            dataModel=None
+            dataModel=deleted_group_member
         )
     except Exception as e:
         return ResponseModel(
