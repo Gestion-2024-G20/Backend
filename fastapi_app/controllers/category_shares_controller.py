@@ -9,6 +9,7 @@ router = APIRouter()
 
 @router.get("/categoryShares", response_model=ResponseModel)
 def get_category_shares(
+    id_cs: Optional[int] = None,
     id_group: Optional[int] = None,
     id_user: Optional[int] = None,
     category_name: Optional[str] = None, 
@@ -19,7 +20,7 @@ def get_category_shares(
 ):
     try:
         category_shares = category_share_service.get_category_shares(
-            db, skip, limit, id_group, id_user, category_name, share_percentage
+            db, skip, limit, id_cs, id_group, id_user, category_name, share_percentage
         )
         if not category_shares:
             return ResponseModel(

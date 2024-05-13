@@ -6,12 +6,16 @@ def get_category_shares(
     db: Session,
     skip: int, 
     limit: int, 
+    id_cs: int,
     id_group: int,
     id_user: int, 
     category_name: str, 
     share_percentage: int
 ):    
     query = db.query(schemas.CategoryShare)
+
+    if id_cs is not None:
+        query = query.filter_by(id_cs=id_cs)
 
     if id_group is not None:
         query = query.filter_by(id_group=id_group)
@@ -29,6 +33,7 @@ def get_category_shares(
     
     return [
         models.CategoryShare(
+            id_cs=cs.id_cs,
             id_group=cs.id_group,
             id_user=cs.id_user,
             category_name=cs.category_name,
