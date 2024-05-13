@@ -6,7 +6,7 @@ from fastapi_app.models import *
 from database import engine
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
-from fastapi_app.controllers import category_shares_controller, group_controller, user_controller, expenditure_controller, group_member_controller
+from fastapi_app.controllers import category_shares_controller, group_controller, user_controller, expenditure_controller, group_member_controller, category_controller
 
 app = FastAPI()
 
@@ -15,7 +15,7 @@ app.include_router(group_member_controller.router)
 app.include_router(category_shares_controller.router)
 app.include_router(group_controller.router)
 app.include_router(user_controller.router)
-
+app.include_router(category_controller.router)
 
 # Configuración de CORS
 app.add_middleware(

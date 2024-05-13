@@ -6,7 +6,6 @@ Base = declarative_base()
 
 class Expenditure(Base):
     __tablename__ = "expenditures"
-
     
     id_user = Column(Integer, ForeignKey('users.id_user'))
     amount =  Column(Float)
@@ -14,9 +13,9 @@ class Expenditure(Base):
     description = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     id_expenditure = Column(Integer, Sequence('expenditure_id_seq'), primary_key=True, index=True)
+
 class User(Base):
     __tablename__ = "users"
-
     
     id_user = Column(Integer, Sequence('user_id_seq'), name='id_user', primary_key=True, index=True)
     username = Column(String)
@@ -24,6 +23,7 @@ class User(Base):
     token = Column(String)
     mail = Column(String)
     celular = Column(String)
+
 class Group(Base):
     __tablename__ = "groups"
     
@@ -31,6 +31,15 @@ class Group(Base):
     name = Column(String)
     members_count = Column(Integer)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
+    
+class Category(Base):
+    __tablename__ = "categories"
+    
+    id_category = Column(Integer, Sequence('category_id_seq'), name='id_category', primary_key=True, index=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'))
+    name = Column(String)
+    description = Column(String)
+
 class CategoryShare(Base):
     __tablename__ = "categoryShares"
      
