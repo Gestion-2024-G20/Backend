@@ -2,6 +2,8 @@
 from sqlalchemy import Boolean, Column, Float, ForeignKey, ForeignKeyConstraint, String, Integer, Sequence,  DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import UniqueConstraint
+
 Base = declarative_base()
 
 class Expenditure(Base):
@@ -39,6 +41,10 @@ class Category(Base):
     id_group = Column(Integer, ForeignKey('groups.id_group'))
     name = Column(String)
     description = Column(String)
+
+    __table_args__ = (UniqueConstraint('id_group', 'name', name='_group_name_uc'),
+                     )
+
 
 class CategoryShare(Base):
     __tablename__ = "categoryShares"

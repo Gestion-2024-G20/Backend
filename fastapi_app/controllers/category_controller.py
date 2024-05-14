@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from fastapi_app.services import category_service
 from fastapi_app.get_db import get_db
 from fastapi_app.models import CategoryBase, CategoryShare, ResponseModel
+from sqlalchemy import exc
 
 router = APIRouter()
 
@@ -17,6 +18,12 @@ def create_category(category: CategoryBase, db: Session = Depends(get_db)):
             detail="Category created successfully",
             dataModel=created_category
         )
+    except exc.IntegrityError:
+        return ResponseModel(
+            code=2,
+            message="ERROR",
+            detail='The names of the categories must be unique inside a group',
+            dataModel=None)
     except Exception as e: 
         return ResponseModel(
             code=1,
