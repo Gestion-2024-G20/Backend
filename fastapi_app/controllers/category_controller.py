@@ -5,6 +5,7 @@ from fastapi_app.services import category_service
 from fastapi_app.get_db import get_db
 from fastapi_app.models import CategoryBase, CategoryShare, ResponseModel
 from sqlalchemy import exc
+from fastapi_app.exceptions import BackendException
 
 router = APIRouter()
 
@@ -77,10 +78,17 @@ def delete_category(
             detail="Category deleted successfully",
             dataModel=category
         )
-    except Exception as e: 
+    except BackendException as e:
         return ResponseModel(
             code=1,
             message="ERROR",
             detail=str(e),
+            dataModel=None
+        )
+    except Exception as e: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail='Error deleting category',
             dataModel=None
         )

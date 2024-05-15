@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi_app.exceptions import BackendException
 
 from fastapi_app.models import CategoryBase
 from fastapi_app.schemas import Category
@@ -36,10 +37,14 @@ def create_category(db: Session, category: CategoryBase):
     return db_category
 
 def delete_category(db: Session, category: CategoryBase):
+    count_categories = db.query(Category).filter_by(id_group=str(category.id_group)).count()
+    if count_categories <= 1:
+        raise  BackendException("The group must have at least one category")
+
     db_category = db.query(Category).filter_by(id_category=str(category.id_category), id_group=str(category.id_group)).first()
     if db_category is None:
         print("Not found")
-        raise KeyError("Category not found: Category does not exist")
+        raise BackendException("Category not found: Category does not exist")
     db.delete(db_category)
     db.commit()
     return db_category
