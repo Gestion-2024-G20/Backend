@@ -51,10 +51,9 @@ def get_users(
 
 def get_user(
     db: Session, 
-    username: str,
-
+    id_user: int,
 ):
-    query = db.query(schemas.User).filter_by(username=username)
+    query = db.query(schemas.User).filter_by(id_user=id_user)
     user = query.first()
     if user:
         return models.User(

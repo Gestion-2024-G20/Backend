@@ -61,14 +61,14 @@ def read_users(
         )
 
 
-@router.get("/user/{username}", response_model=ResponseModel)
-def read_user_by_username(
-    username: str,
+@router.get("/user/{id_user}", response_model=ResponseModel)
+def read_user(
+    id_user: int,
     db: Session = Depends(get_db)
 ):
     try:
         user = user_service.get_user(
-            db, username
+            db, id_user
         )
         if not user:
             return ResponseModel(
