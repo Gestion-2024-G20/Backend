@@ -42,8 +42,7 @@ class Category(Base):
     name = Column(String)
     description = Column(String)
 
-    __table_args__ = (UniqueConstraint('id_group', 'name', name='_group_name_uc'),
-                     )
+    __table_args__ = (UniqueConstraint('id_group', 'name', name='_group_name_uc'),)
 
 
 class CategoryShare(Base):
@@ -55,7 +54,13 @@ class CategoryShare(Base):
     category_name = Column(String)
     share_percentage = Column(Integer)
 
+class ExpenditureShare(Base):
+    __tablename__ = "expenditureShares"
 
+    id_es = Column(Integer, Sequence('es_id_seq'), name='id_es', primary_key=True, index=True) 
+    id_expenditure = Column(Integer, ForeignKey('expenditures.id_expenditure'), name='id_expenditure')
+    id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')
+    share_percentage = Column(Integer)
 class GroupMember(Base):
     __tablename__ = "groupMembers"
       

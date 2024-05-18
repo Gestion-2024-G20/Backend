@@ -7,7 +7,6 @@ from fastapi_app.models import ExpenditureBase, ResponseModel
 
 router = APIRouter()
 
-
 @router.post("/expenditures", response_model=ResponseModel)
 def create_expenditure(expenditure: ExpenditureBase, db: Session = Depends(get_db)):
     try:

@@ -47,7 +47,11 @@ class CategoryShare(BaseModel):
     id_user : int
     category_name : str
     share_percentage : int
-
+class ExpenditureShare(BaseModel):
+    id_es : int 
+    id_expenditure : int 
+    id_user : int
+    share_percentage : int
 class ResponseModel(BaseModel):
     code:int
     message:str
