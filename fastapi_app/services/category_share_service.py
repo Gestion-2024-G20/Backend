@@ -63,14 +63,14 @@ def create_category_share(db: Session, category_share: models.CategoryShare):
             id_user=category_share.id_user,
             share_percentage=category_share.share_percentage
     )
-    group = db.query(schemas.Group).filter_by(id_category=category_share.id_category).first()
-    if group is None: 
-         raise KeyError("group_id not found: Group does not exist")
+    category = db.query(schemas.Category).filter_by(id_category=category_share.id_category).first()
+    if category is None: 
+         raise KeyError("category_id not found: Category does not exist")
     
     user = db.query(schemas.User).filter_by(id_user=category_share.id_user).first()
     if user is None: 
          raise KeyError("user_id not found: User does not exist")
-    group.members_count += 1
+    
     db.add(db_category_share)
     db.commit()
     db.refresh(db_category_share)
