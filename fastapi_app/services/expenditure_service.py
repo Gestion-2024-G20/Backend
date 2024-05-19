@@ -22,13 +22,31 @@ def get_expenditures(
     skip: int = 0, limit: int = 100
 ):
     query = db.query(
-    	Expenditure()
+    	Expenditure
     ).filter_by(id_group=id_group)
 
     if id_user is not None:
         query = query.filter_by(id_user=id_user)
 
     expenditures = query.offset(skip).limit(limit).all()
+
+    return [
+        Expenditure(
+            id_user=e.id_user,
+            amount=e.amount,
+            id_group=e.id_group,
+            description=e.description,
+            time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S')
+        ) 
+
+        for e in expenditures
+    ]
+def get_group_expenditures(
+    db: Session, id_group: int
+):
+    expenditures = db.query(
+    	Expenditure
+    ).filter_by(id_group=id_group).all()
 
     return [
         Expenditure(

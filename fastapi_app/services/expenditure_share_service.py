@@ -19,7 +19,7 @@ def get_expenditure_shares(
     skip: int = 0, limit: int = 100
 ):
     query = db.query(
-        ExpenditureShare()
+        ExpenditureShare
     ).filter_by(id_group=id_group)
 
     if id_user is not None:
