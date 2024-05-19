@@ -49,9 +49,8 @@ class CategoryShare(Base):
     __tablename__ = "categoryShares"
      
     id_cs = Column(Integer, Sequence('cs_id_seq'), name='id_cs', primary_key=True, index=True)
-    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
+    id_category = Column(Integer, ForeignKey('categories.id_category'), name='id_category')
     id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')
-    category_name = Column(String)
     share_percentage = Column(Integer)
 
 class ExpenditureShare(Base):

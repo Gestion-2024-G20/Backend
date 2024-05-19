@@ -10,9 +10,8 @@ router = APIRouter()
 @router.get("/categoryShares", response_model=ResponseModel)
 def get_category_shares(
     id_cs: Optional[int] = None,
-    id_group: Optional[int] = None,
+    id_category: Optional[int] = None,
     id_user: Optional[int] = None,
-    category_name: Optional[str] = None, 
     share_percentage: Optional[int] = None, 
     skip: int = 0, 
     limit: int = 100, 
@@ -20,7 +19,7 @@ def get_category_shares(
 ):
     try:
         category_shares = category_share_service.get_category_shares(
-            db, skip, limit, id_cs, id_group, id_user, category_name, share_percentage
+            db, skip, limit, id_cs, id_category, id_user, share_percentage
         )
         if not category_shares:
             return ResponseModel(
@@ -43,6 +42,33 @@ def get_category_shares(
             dataModel=None
         )
 
+@router.get("/categoryShares/id_group={id_group}", response_model=ResponseModel)
+def get_group_category_shares(id_group: int, db: Session = Depends(get_db)):
+
+    try:
+        category_shares = category_share_service.get_group_category_shares(
+            db, id_group
+        )
+        if not category_shares:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No category shares found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Category shares retrieved successfully",
+            dataModel=category_shares
+        )
+    except Exception as e: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
 @router.post("/categoryShares", response_model=ResponseModel)
 def create_category_share(category_share: CategoryShare, db: Session = Depends(get_db)):
     try:
@@ -61,7 +87,7 @@ def create_category_share(category_share: CategoryShare, db: Session = Depends(g
             dataModel=None
         )
 
-@router.delete("/categoryShares", response_model=ResponseModel)
+@router.delete("/categoryShares/{category_share_id}", response_model=ResponseModel)
 def delete_category_share(category_share_id: int, db: Session = Depends(get_db)):
     try:
         deleted_category_share = category_share_service.delete_category_share(db=db, category_share_id=category_share_id)
@@ -76,6 +102,31 @@ def delete_category_share(category_share_id: int, db: Session = Depends(get_db))
             code=0,
             message="OK",
             detail="Category share deleted successfully",
+            dataModel=None
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+@router.delete("/categoryCategoryShares/{category_id}", response_model=ResponseModel)
+def delete_category_category_shares(category_id: int, db: Session = Depends(get_db)):
+    try:
+        deleted_category_shares = category_share_service.delete_category_category_shares(db=db, category_id=category_id)
+        if not deleted_category_shares or len(deleted_category_shares) == 0:
+            return ResponseModel(
+                code=0,
+                message="NOT FOUND",
+                detail="Category shares not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail=len(deleted_category_shares) + " Category shares deleted successfully",
             dataModel=None
         )
     except Exception as e:

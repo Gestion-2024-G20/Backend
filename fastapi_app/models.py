@@ -43,9 +43,8 @@ class CategoryBase(BaseModel):
 
 class CategoryShare(BaseModel):
     id_cs : int 
-    id_group : int 
+    id_category : int 
     id_user : int
-    category_name : str
     share_percentage : int
 class ExpenditureShare(BaseModel):
     id_es : int 
