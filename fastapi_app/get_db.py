@@ -1,4 +1,4 @@
-from database import SessionLocal, engine
+from fastapi_app.database import SessionLocal, engine
 
 
 def get_db():

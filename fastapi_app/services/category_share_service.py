@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi_app import schemas, models
-from schemas import Category, CategoryShare
+from ..schemas import Category, CategoryShare
 
 def get_category_shares(
     db: Session,

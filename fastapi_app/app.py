@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import fastapi_app.schemas as schemas
 from fastapi_app.models import *
-from database import engine
+from fastapi_app.database import engine
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from fastapi_app.controllers import category_shares_controller, expenditure_share_controller, group_controller, user_controller, expenditure_controller, group_member_controller, category_controller
@@ -26,6 +26,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
+
 schemas.Base.metadata.create_all(bind=engine)
 
 
