@@ -42,11 +42,20 @@ def get_expenditures(
         for e in expenditures
     ]
 def get_group_expenditures(
-    db: Session, id_group: int
+    db: Session, id_group: int,
+    id_user: int = None, id_category: int = None
 ):
-    expenditures = db.query(
+    query = db.query(
     	Expenditure
-    ).filter_by(id_group=id_group).all()
+    ).filter_by(id_group=id_group)
+
+    if id_user is not None:
+        query = query.filter_by(id_user=id_user)
+
+    if id_category is not None:
+        query = query.filter_by(id_category=id_category) 
+    
+    expenditures = query.all()
 
     return [
         Expenditure(

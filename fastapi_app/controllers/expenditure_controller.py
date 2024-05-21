@@ -28,12 +28,14 @@ def create_expenditure(expenditure: ExpenditureBase, db: Session = Depends(get_d
 
 @router.get("/expenditures/{id_group}", response_model=ResponseModel)
 def read_group_expenditures(
-    id_group: int,
+    id_group: int, 
+    id_user: Optional[int] = None,
+    id_category: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
     try:
         expenditures = expenditure_service.get_group_expenditures(
-            db, id_group
+            db, id_group, id_user, id_category
         )
         if not expenditures:
             return ResponseModel(
