@@ -68,3 +68,10 @@ class GroupMember(Base):
     id_user = Column(Integer, ForeignKey('users.id_user'),name='id_user')
     is_admin = Column(Boolean)
 
+#Tabla de Invitaciones
+class Invitation(Base):
+    __tablename__ = "invitations"
+     
+    id_invitation = Column(Integer, Sequence('invitation_id_seq'), name='id_invitation', primary_key=True, index=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
+    id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')

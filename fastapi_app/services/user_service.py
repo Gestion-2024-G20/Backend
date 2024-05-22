@@ -98,3 +98,8 @@ def delete_user(db: Session, user_id: int):
         db.commit()
         return True
     return False
+
+def get_users_by_group_id(db: Session, group_id: int):
+    query = db.query(schemas.User).filter_by(id_group=group_id)
+    users = query.all()
+    return users
