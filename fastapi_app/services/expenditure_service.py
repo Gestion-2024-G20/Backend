@@ -7,6 +7,7 @@ from fastapi_app.schemas import Expenditure
 
 def create_expenditure(db: Session, expenditure: ExpenditureBase):
     db_expenditure = Expenditure(
+        id_user=expenditure.id_user,
         amount=expenditure.amount,
         id_group=expenditure.id_group,
         description=expenditure.description
@@ -72,7 +73,8 @@ def get_group_expenditures(
             amount=e.amount,
             id_group=e.id_group,
             description=e.description,
-            time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S')
+            time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S'), 
+            id_expenditure=e.id_expenditure
         ) 
 
         for e in expenditures

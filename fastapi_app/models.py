@@ -56,3 +56,9 @@ class ResponseModel(BaseModel):
     message:str
     detail:str
     dataModel:Any
+
+#Clase invitación
+class Invitation(BaseModel):
+    id_invitation : int
+    id_group : int
+    id_user : int
