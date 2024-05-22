@@ -20,8 +20,10 @@ def get_expenditure_shares(
 ):
     query = db.query(
         ExpenditureShare
-    ).filter_by(id_group=id_group)
-
+    )
+    if id_group is not None:
+        query = query.filter_by(id_group=id_group)
+        
     if id_user is not None:
         query = query.filter_by(id_user=id_user)
 
@@ -54,4 +56,12 @@ def delete_expenditure_share(db: Session, expenditure_share_id: int):
         db.delete(db_expenditure_share)
         db.commit()
         return True
+    return False
+
+def delete_expenditure_share_by_expenditure_id(db: Session, expenditure_id: int):
+    db_expenditure_shares = db.query(ExpenditureShare).filter_by(id_expenditure=expenditure_id).all()
+    if db_expenditure_shares:
+        db.delete(db_expenditure_shares)
+        db.commit()
+        return db_expenditure_shares
     return False
