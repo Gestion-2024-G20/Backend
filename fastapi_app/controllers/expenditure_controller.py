@@ -7,6 +7,7 @@ from fastapi_app.models import ExpenditureBase, ResponseModel
 
 router = APIRouter()
 
+#Crear un expenditure
 @router.post("/expenditures", response_model=ResponseModel)
 def create_expenditure(expenditure: ExpenditureBase, db: Session = Depends(get_db)):
     try:
@@ -26,6 +27,7 @@ def create_expenditure(expenditure: ExpenditureBase, db: Session = Depends(get_d
         )
 
 
+#Obtener los expenditures de un grupo
 @router.get("/expenditures/{id_group}", response_model=ResponseModel)
 def read_group_expenditures(
     id_group: int,
@@ -56,7 +58,7 @@ def read_group_expenditures(
             dataModel=None
         )
 
-
+# Borrar expenditure
 @router.delete("/expenditures/{expenditure_id}", response_model=ResponseModel)
 def delete_expenditure(expenditure_id: int, db: Session = Depends(get_db)):
     try:
@@ -83,6 +85,8 @@ def delete_expenditure(expenditure_id: int, db: Session = Depends(get_db)):
         )
 
 
+
+# modificacion de expenditure
 @router.put("/expenditures/{expenditure_id}", response_model=ResponseModel)
 def update_expenditure(
     expenditure_id: int, expenditure: ExpenditureBase, db: Session = Depends(get_db)

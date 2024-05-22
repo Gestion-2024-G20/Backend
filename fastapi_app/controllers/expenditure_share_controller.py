@@ -25,8 +25,39 @@ def create_expenditure_share(expenditure_share: ExpenditureShare, db: Session = 
             dataModel=None
         )
 
-@router.get("/expenditure-shares/group/{id_group}", response_model=ResponseModel)
+@router.get("/expenditure-shares", response_model=ResponseModel)
 def read_expenditure_shares(
+    id_group: Optional[int] = None, id_user: Optional[int] = None,
+    skip: int = 0, limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    try:
+        expenditure_shares = expenditure_share_service.get_expenditure_shares(
+            db, id_group, id_user, skip=skip, limit=limit
+        )
+        if not expenditure_shares:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No expenditure shares found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Expenditure Shares retrieved successfully",
+            dataModel=expenditure_shares
+        )
+    except Exception as e: 
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+@router.get("/expenditure-shares/group/{id_group}", response_model=ResponseModel)
+def read_expenditure_shares_id_group(
     id_group: int, id_user: Optional[int] = None,
     skip: int = 0, limit: int = 100, 
     db: Session = Depends(get_db)
@@ -82,3 +113,56 @@ def update_expenditure_share(
             detail=str(e),
             dataModel=None
         )
+    
+
+@router.delete("/expenditure-shares/{expenditure_share_id}", response_model=ResponseModel)
+def delete_expenditure_share(expenditure_share_id: int, db: Session = Depends(get_db)):
+    try:
+        deleted_expenditure_share = expenditure_share_service.delete_expenditure_share(db=db, expenditure_share_id=expenditure_share_id)
+        if not deleted_expenditure_share:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Expenditure Share not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Expenditure Share deleted successfully",
+            dataModel=None
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )   
+    
+
+
+@router.delete("/expenditureSharesByExpenditureId/{expenditure_id}", response_model=ResponseModel)
+def delete_expenditure_share(expenditure_id: int, db: Session = Depends(get_db)):
+    try:
+        deleted_expenditure_share = expenditure_share_service.delete_expenditure_share_by_expenditure_id(db=db, expenditure_id=expenditure_id)
+        if not deleted_expenditure_share:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Expenditure Share not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Expenditure Shares deleted successfully",
+            dataModel=deleted_expenditure_share
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )   

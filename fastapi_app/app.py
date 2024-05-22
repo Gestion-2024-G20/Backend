@@ -27,6 +27,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
+
 schemas.Base.metadata.create_all(bind=engine)
 
 
