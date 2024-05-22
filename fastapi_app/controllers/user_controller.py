@@ -4,10 +4,15 @@ from sqlalchemy.orm import Session
 from fastapi_app.services import user_service
 from fastapi_app.get_db import get_db
 from fastapi_app.models import User, ResponseModel
+from fastapi_app.services import group_service
+from fastapi_app.services import group_member_service
+from fastapi_app import models
+
 
 router = APIRouter()
 
 
+#Guardar un usuario
 @router.post("/users")
 def create_user(user: User, db: Session = Depends(get_db)):
     try:
@@ -27,6 +32,7 @@ def create_user(user: User, db: Session = Depends(get_db)):
         )
 
 
+#Obtener todos los usuarios
 @router.get("/users", response_model=ResponseModel)
 def read_users(
     id_user: Optional[int] = None,
@@ -61,6 +67,7 @@ def read_users(
         )
 
 
+#Obtener usuario por id
 @router.get("/user/{id_user}", response_model=ResponseModel)
 def read_user(
     id_user: int,
@@ -92,6 +99,7 @@ def read_user(
         )
 
 
+#Borrar un usuario
 @router.delete("/users/{user_id}")
 def delete_user(
     user_id: int,
@@ -121,6 +129,7 @@ def delete_user(
         )
 
 
+#Actualizar un usuario
 @router.put("/users/{user_id}")
 def update_user(
     user_id: int,
