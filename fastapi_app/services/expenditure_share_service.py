@@ -52,8 +52,9 @@ def update_expenditure_share(db: Session, expenditure_share_id: int, updated_exp
 
 def delete_expenditure_share(db: Session, expenditure_share_id: int):
     db_expenditure_share = db.query(ExpenditureShare).filter_by(id_es=expenditure_share_id).first()
-    if db_expenditure_share:
-        db.delete(db_expenditure_share)
+    if db_expenditure_share: 
+        for es in db_expenditure_share:
+            db.delete(es)
         db.commit()
         return True
     return False
