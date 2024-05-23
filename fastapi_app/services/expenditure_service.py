@@ -10,7 +10,8 @@ def create_expenditure(db: Session, expenditure: ExpenditureBase):
         id_user=expenditure.id_user,
         amount=expenditure.amount,
         id_group=expenditure.id_group,
-        description=expenditure.description
+        description=expenditure.description,
+        id_category=expenditure.id_category
     )
     db.add(db_expenditure)
     db.commit()
@@ -38,17 +39,35 @@ def get_expenditures(
             amount=e.amount,
             id_group=e.id_group,
             description=e.description,
+            id_category=e.id_category,
             time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S')
         ) 
 
         for e in expenditures
     ]
 def get_group_expenditures(
-    db: Session, id_group: int
+    db: Session, id_group: int,
+    id_user: int = None, id_category: int = None,
+    min_date: str = None, max_date: str = None
 ):
-    expenditures = db.query(
+    query = db.query(
     	Expenditure
-    ).filter_by(id_group=id_group).all()
+    ).filter_by(id_group=id_group)
+	
+    if id_user is not None:
+        query = query.filter_by(id_user=id_user)
+
+    if id_category is not None:
+        query = query.filter_by(id_category=id_category) 
+
+
+    if min_date is not None:
+        query = query.filter(func.date(Expenditure.time_created) >= min_date)
+
+    if max_date is not None:
+        query = query.filter(func.date(Expenditure.time_created) <= max_date)
+    
+    expenditures = query.all()
 
     return [
         Expenditure(
@@ -56,6 +75,7 @@ def get_group_expenditures(
             amount=e.amount,
             id_group=e.id_group,
             description=e.description,
+            id_category=e.id_category,
             time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S'), 
             id_expenditure=e.id_expenditure
         ) 
@@ -70,6 +90,7 @@ def update_expenditure(db: Session, expenditure_id: int, updated_expenditure: Ex
         db_expenditure.amount = updated_expenditure.amount
         db_expenditure.id_group = updated_expenditure.id_group
         db_expenditure.description = updated_expenditure.description
+        db_expenditure.id_category = updated_expenditure.id_category
         db.commit()
         db.refresh(db_expenditure)
         return db_expenditure

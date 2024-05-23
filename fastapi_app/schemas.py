@@ -12,6 +12,7 @@ class Expenditure(Base):
     id_user = Column(Integer, ForeignKey('users.id_user'))
     amount =  Column(Float)
     id_group = Column(Integer, ForeignKey('groups.id_group'))
+    id_category = Column(Integer, ForeignKey('categories.id_category'))
     description = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     id_expenditure = Column(Integer, Sequence('expenditure_id_seq'), primary_key=True, index=True)

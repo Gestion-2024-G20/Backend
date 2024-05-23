@@ -9,6 +9,7 @@ class ExpenditureBase(BaseModel):
 	id_group: int
 	description : str
 	id_expenditure : int
+	id_category: int
 
 class Expenditure(ExpenditureBase):
 	time_created: str
