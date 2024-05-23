@@ -65,13 +65,13 @@ def get_categories(
             dataModel=None
         )
 
-@router.post("/deleteCategory", response_model=ResponseModel)
+@router.delete("/category/{category_id}", response_model=ResponseModel)
 def delete_category(
-    category: CategoryBase,
+    category_id: int,
     db: Session = Depends(get_db)
 ):
     try:
-        category_service.delete_category(db, category)
+        category = category_service.delete_category(db, category_id)
         return ResponseModel(
             code=0,
             message="OK",

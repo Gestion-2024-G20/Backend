@@ -42,20 +42,24 @@ class Category(Base):
     name = Column(String)
     description = Column(String)
 
-    __table_args__ = (UniqueConstraint('id_group', 'name', name='_group_name_uc'),
-                     )
+    __table_args__ = (UniqueConstraint('id_group', 'name', name='_group_name_uc'),)
 
 
 class CategoryShare(Base):
     __tablename__ = "categoryShares"
      
     id_cs = Column(Integer, Sequence('cs_id_seq'), name='id_cs', primary_key=True, index=True)
-    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
+    id_category = Column(Integer, ForeignKey('categories.id_category'), name='id_category')
     id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')
-    category_name = Column(String)
     share_percentage = Column(Integer)
 
+class ExpenditureShare(Base):
+    __tablename__ = "expenditureShares"
 
+    id_es = Column(Integer, Sequence('es_id_seq'), name='id_es', primary_key=True, index=True) 
+    id_expenditure = Column(Integer, ForeignKey('expenditures.id_expenditure'), name='id_expenditure')
+    id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')
+    share_percentage = Column(Integer)
 class GroupMember(Base):
     __tablename__ = "groupMembers"
       
@@ -64,3 +68,10 @@ class GroupMember(Base):
     id_user = Column(Integer, ForeignKey('users.id_user'),name='id_user')
     is_admin = Column(Boolean)
 
+#Tabla de Invitaciones
+class Invitation(Base):
+    __tablename__ = "invitations"
+     
+    id_invitation = Column(Integer, Sequence('invitation_id_seq'), name='id_invitation', primary_key=True, index=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
+    id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')

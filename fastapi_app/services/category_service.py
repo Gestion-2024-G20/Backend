@@ -36,15 +36,11 @@ def create_category(db: Session, category: CategoryBase):
 
     return db_category
 
-def delete_category(db: Session, category: CategoryBase):
-    count_categories = db.query(Category).filter_by(id_group=str(category.id_group)).count()
-    if count_categories <= 1:
-        raise  BackendException("The group must have at least one category")
-
-    db_category = db.query(Category).filter_by(id_category=str(category.id_category), id_group=str(category.id_group)).first()
-    if db_category is None:
+def delete_category(db: Session, category_id: int):
+    category = db.query(Category).filter_by(id_category=category_id).first()
+    if not category:
         print("Not found")
         raise BackendException("Category not found: Category does not exist")
-    db.delete(db_category)
+    db.delete(category)
     db.commit()
-    return db_category
+    return category
