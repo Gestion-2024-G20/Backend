@@ -1,5 +1,6 @@
 from uuid import uuid4
 from sqlalchemy.orm import Session
+from sqlalchemy import and_, func
 
 from fastapi_app.models import ExpenditureBase
 from fastapi_app.schemas import Expenditure
@@ -43,11 +44,28 @@ def get_expenditures(
         for e in expenditures
     ]
 def get_group_expenditures(
-    db: Session, id_group: int
+    db: Session, id_group: int,
+    id_user: int = None, id_category: int = None,
+    min_date: str = None, max_date: str = None
 ):
-    expenditures = db.query(
+    query = db.query(
     	Expenditure
-    ).filter_by(id_group=id_group).all()
+    ).filter_by(id_group=id_group)
+
+    if id_user is not None:
+        query = query.filter_by(id_user=id_user)
+
+    if id_category is not None:
+        query = query.filter_by(id_category=id_category) 
+
+
+    if min_date is not None:
+        query = query.filter(func.date(Expenditure.time_created) >= min_date)
+
+    if max_date is not None:
+        query = query.filter(func.date(Expenditure.time_created) <= max_date)
+    
+    expenditures = query.all()
 
     return [
         Expenditure(
