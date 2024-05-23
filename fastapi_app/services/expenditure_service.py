@@ -1,5 +1,6 @@
 from uuid import uuid4
 from sqlalchemy.orm import Session
+from sqlalchemy import and_, func
 
 from fastapi_app.models import ExpenditureBase
 from fastapi_app.schemas import Expenditure
