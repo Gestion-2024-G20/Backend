@@ -11,8 +11,9 @@ class ExpenditureBase(BaseModel):
 	id_expenditure : int
 	id_category: int
 
-class Expenditure(ExpenditureBase):
+class ExpenditureComplete(ExpenditureBase):
 	time_created: str
+	name_category: str
 
 class User(BaseModel):
 	id_user : int

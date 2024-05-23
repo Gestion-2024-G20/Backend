@@ -2,8 +2,8 @@ from uuid import uuid4
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 
-from fastapi_app.models import ExpenditureBase
-from fastapi_app.schemas import Expenditure
+from fastapi_app.models import ExpenditureBase, ExpenditureComplete
+from fastapi_app.schemas import Expenditure, Category
 
 def create_expenditure(db: Session, expenditure: ExpenditureBase):
     db_expenditure = Expenditure(
@@ -51,8 +51,12 @@ def get_group_expenditures(
     min_date: str = None, max_date: str = None
 ):
     query = db.query(
-    	Expenditure
-    ).filter_by(id_group=id_group)
+    	Expenditure, Category
+    ).filter_by(
+        id_group=id_group
+    ).join(
+        Category, Expenditure.id_category == Category.id_category
+    )
 	
     if id_user is not None:
         query = query.filter_by(id_user=id_user)
@@ -70,17 +74,18 @@ def get_group_expenditures(
     expenditures = query.all()
 
     return [
-        Expenditure(
+        ExpenditureComplete(
             id_user=e.id_user,
             amount=e.amount,
             id_group=e.id_group,
             description=e.description,
             id_category=e.id_category,
+            name_category=c.name,
             time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S'), 
             id_expenditure=e.id_expenditure
         ) 
 
-        for e in expenditures
+        for e, c in expenditures
     ]
 
 """
