@@ -64,3 +64,13 @@ class Invitation(BaseModel):
     id_invitation : int
     id_group : int
     id_user : int
+
+
+class BalanceItem(BaseModel):
+	id_user: int
+	username: str
+	amount: float
+
+class Balance(BaseModel):
+	to_pay: List[BalanceItem]
+	to_receive: List[BalanceItem]

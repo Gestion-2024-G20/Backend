@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi_app import schemas, models
+from fastapi_app.services.group_member_service import get_group_members
 
 
 def create_user(db: Session, user: models.User):

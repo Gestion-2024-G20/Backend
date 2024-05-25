@@ -76,3 +76,13 @@ class Invitation(Base):
     id_invitation = Column(Integer, Sequence('invitation_id_seq'), name='id_invitation', primary_key=True, index=True)
     id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
     id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')
+
+
+# Tabla de saldos
+class Balance(Base):
+    __tablename__ = "balance"
+
+    id_user_1 = Column(Integer, ForeignKey('users.id_user'), name='id_user_1', primary_key=True, index=True)
+    id_user_2 = Column(Integer, ForeignKey('users.id_user'), name='id_user_2', primary_key=True, index=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group', primary_key=True, index=True)
+    balance = Column(Float)

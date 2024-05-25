@@ -4,6 +4,8 @@ from sqlalchemy import and_, func
 
 from fastapi_app.models import ExpenditureBase, ExpenditureComplete
 from fastapi_app.schemas import Expenditure, Category
+from fastapi_app.services.balance_service import delete_expenditure_from_balance
+from fastapi_app.services.expenditure_share_service import delete_expenditure_share_by_expenditure_id
 
 def create_expenditure(db: Session, expenditure: ExpenditureBase):
     db_expenditure = Expenditure(
@@ -21,12 +23,18 @@ def create_expenditure(db: Session, expenditure: ExpenditureBase):
 
 
 def get_expenditures(
-    db: Session, id_group: int, id_user: int = None,
+    db: Session, id_group: int = None, id_user: int = None, id_expenditure: int = None,
     skip: int = 0, limit: int = 100
 ):
     query = db.query(
     	Expenditure
-    ).filter_by(id_group=id_group)
+    )
+
+    if id_expenditure is not None:
+        query = query.filter_by(id_expenditure=id_expenditure)
+    
+    if id_group is not None:
+        query = query.filter_by(id_group=id_group)
 
     if id_user is not None:
         query = query.filter_by(id_user=id_user)
@@ -104,6 +112,9 @@ def update_expenditure(db: Session, expenditure_id: int, updated_expenditure: Ex
 def delete_expenditure(db: Session, expenditure_id: int):
     db_expenditure = db.query(Expenditure).filter_by(id_expenditure=expenditure_id).first()
     if db_expenditure:
+        delete_expenditure_from_balance(db, expenditure_id)
+        delete_expenditure_share_by_expenditure_id(db, expenditure_id=expenditure_id)
+
         db.delete(db_expenditure)
         db.commit()
         return True

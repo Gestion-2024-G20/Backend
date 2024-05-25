@@ -37,7 +37,7 @@ def read_group_expenditures(
     max_date: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
- #   try:
+    try:
         expenditures = expenditure_service.get_group_expenditures(
             db, id_group, id_user, id_category, min_date, max_date
         )
@@ -54,12 +54,13 @@ def read_group_expenditures(
             detail="Expenditures retrieved successfully",
             dataModel=expenditures
         )
-#    except Exception as e: 
- ##          code=2,
-   #         message="ERROR",
-    #        detail=str(e),
-     #       dataModel=None
-     #   )
+    except Exception as e: 
+        return ResponseModel(
+            code=2,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
 
 # Borrar expenditure
 @router.delete("/expenditures/{expenditure_id}", response_model=ResponseModel)
@@ -77,7 +78,7 @@ def delete_expenditure(expenditure_id: int, db: Session = Depends(get_db)):
             code=0,
             message="OK",
             detail="Expenditure deleted successfully",
-            dataModel=None
+            dataModel=deleted_expenditure
         )
     except Exception as e:
         return ResponseModel(
@@ -85,7 +86,7 @@ def delete_expenditure(expenditure_id: int, db: Session = Depends(get_db)):
             message="ERROR",
             detail=str(e),
             dataModel=None
-        )
+    )
 
 
 

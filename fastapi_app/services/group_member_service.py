@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi_app import schemas, models
+from fastapi_app.services.balance_service import create_balance
 
 
 def get_group_members(
@@ -53,6 +54,8 @@ def create_group_member(db: Session, group_member: models.GroupMember):
     db.add(db_group_member)
     db.commit()
     db.refresh(db_group_member)
+
+    create_balance(db, group_member)
     
     return db_group_member
 """ 

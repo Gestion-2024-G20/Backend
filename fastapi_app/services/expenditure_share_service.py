@@ -1,6 +1,7 @@
 from uuid import uuid4
 from sqlalchemy.orm import Session
 from fastapi_app.schemas import ExpenditureShare
+from fastapi_app.services.balance_service import add_expenditure_share_to_balance
 
 def create_expenditure_share(db: Session, expenditure_share: ExpenditureShare):
     db_expenditure_share = ExpenditureShare(
@@ -12,17 +13,19 @@ def create_expenditure_share(db: Session, expenditure_share: ExpenditureShare):
     db.commit()
     db.refresh(db_expenditure_share)
 
+    add_expenditure_share_to_balance(db, expenditure_share=expenditure_share)
+
     return db_expenditure_share
 
 def get_expenditure_shares(
-    db: Session, id_group: int, id_user: int = None,
+    db: Session, id_expenditure: int, id_user: int = None,
     skip: int = 0, limit: int = 100
 ):
     query = db.query(
         ExpenditureShare
     )
-    if id_group is not None:
-        query = query.filter_by(id_group=id_group)
+    if id_expenditure is not None:
+        query = query.filter_by(id_expenditure=id_expenditure)
         
     if id_user is not None:
         query = query.filter_by(id_user=id_user)
@@ -61,8 +64,9 @@ def delete_expenditure_share(db: Session, expenditure_share_id: int):
 
 def delete_expenditure_share_by_expenditure_id(db: Session, expenditure_id: int):
     db_expenditure_shares = db.query(ExpenditureShare).filter_by(id_expenditure=expenditure_id).all()
-    if db_expenditure_shares:
-        db.delete(db_expenditure_shares)
+    for db_expenditure_share in db_expenditure_shares:
+        db.delete(db_expenditure_share)
         db.commit()
-        return db_expenditure_shares
-    return False
+    
+    return db_expenditure_shares
+    
