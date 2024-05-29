@@ -33,8 +33,10 @@ def get_invitation(db: Session, invitation_id: int):
     return db.query(schemas.Invitation).filter_by(id_invitation=invitation_id).first()
 
 #obtener invitaciones por id de usuario
-def get_invitations_by_user_id(db: Session, user_id: int):
-    return db.query(schemas.Invitation).filter_by(id_user=user_id).all()
+def get_invitations_by_user_id(db: Session, user_id: int, is_request: bool):
+    if is_request is None or is_request != True:
+        return db.query(schemas.Invitation).filter_by(id_user=user_id, is_request = False).all()
+    return db.query(schemas.Invitation).filter_by(id_user=user_id, is_request = True).all()
 
 def delete_invitation(db: Session, invitation_id: int):
     print("deleting invitation")

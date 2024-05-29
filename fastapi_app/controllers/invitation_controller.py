@@ -58,9 +58,9 @@ async def get_invitation(invitation_id: int, db: Session = Depends(get_db)):
 
 #Obtiene todas las invitaciones de un usuario
 @router.get("/user/{user_id}/userGroupInvitations")
-async def get_invitations(user_id: int, db: Session = Depends(get_db)):
+async def get_invitations(user_id: int, db: Session = Depends(get_db), requested: Optional[bool] = Query(None, description="Filtrar por invitaciones solicitadas")):
     try:
-        invitations = invitation_service.get_invitations_by_user_id(db, user_id)
+        invitations = invitation_service.get_invitations_by_user_id(db, user_id, requested)
         return ResponseModel(
             code=0,
             message="OK",
