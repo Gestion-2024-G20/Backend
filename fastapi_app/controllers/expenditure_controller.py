@@ -96,7 +96,7 @@ def update_expenditure(
     expenditure_id: int, expenditure: ExpenditureBase, db: Session = Depends(get_db)
 ):
     try:
-        updated_expenditure = expenditure_service.update_expenditure(db=db, expenditure_id=expenditure_id, expenditure=expenditure)
+        updated_expenditure = expenditure_service.update_expenditure(db=db, expenditure_id=expenditure_id, updated_expenditure=expenditure)
         if not updated_expenditure:
             return ResponseModel(
                 code=1,
