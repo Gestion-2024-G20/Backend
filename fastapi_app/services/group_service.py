@@ -51,6 +51,7 @@ def get_group_by_id(
             name=group.name,
             members_count=group.members_count,
             time_created=group.time_created.strftime('%Y-%m-%d %H:%M:%S'),
+            description=group.description
         ) 
     
     
@@ -60,6 +61,7 @@ def create_group(db: Session, group: models.GroupBase):
     db_group = schemas.Group(
         name=group.name,
 	    members_count= group.members_count,
+        description = group.description
     )
     
     db.add(db_group)
@@ -73,6 +75,7 @@ def update_group(db: Session, group_id: int, updated_group: models.GroupBase):
     if db_group:
         db_group.name = updated_group.name
         db_group.members_count = updated_group.members_count
+        db.group.description = update_group.description
         db.commit()
         db.refresh(db_group)
         return db_group

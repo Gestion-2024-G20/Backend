@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 from pyparsing import Any
@@ -27,6 +27,7 @@ class GroupBase(BaseModel):
 	id_group : int
 	name: str
 	members_count: int
+	description: Optional[str]
 
 class Group(GroupBase):
 	time_created: str
