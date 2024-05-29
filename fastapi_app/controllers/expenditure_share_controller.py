@@ -62,7 +62,7 @@ def update_expenditure_share(
     expenditure_share_id: int, expenditure_share: ExpenditureShare, db: Session = Depends(get_db)
 ):
     try:
-        updated_expenditure_share = expenditure_share_service.update_expenditure_share(db=db, expenditure_share_id=expenditure_share_id, expenditure_share=expenditure_share)
+        updated_expenditure_share = expenditure_share_service.update_expenditure_share(db=db, expenditure_share_id=expenditure_share_id, updated_expenditure_share=expenditure_share)
         if not updated_expenditure_share:
             return ResponseModel(
                 code=1,

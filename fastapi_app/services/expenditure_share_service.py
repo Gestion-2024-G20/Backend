@@ -1,5 +1,6 @@
 from uuid import uuid4
 from sqlalchemy.orm import Session
+from sqlalchemy import update
 from fastapi_app.schemas import ExpenditureShare
 from fastapi_app.services.balance_service import add_expenditure_share_to_balance
 
@@ -45,11 +46,21 @@ def get_expenditure_shares(
 def update_expenditure_share(db: Session, expenditure_share_id: int, updated_expenditure_share: ExpenditureShare):
     db_expenditure_share = db.query(ExpenditureShare).filter_by(id_es=expenditure_share_id).first()
     if db_expenditure_share:
-        db_expenditure_share.id_expenditure = updated_expenditure_share.id_expenditure
-        db_expenditure_share.id_user = updated_expenditure_share.id_user
-        db_expenditure_share.share_percentage = updated_expenditure_share.share_percentage
+        update_query = update(ExpenditureShare).where(ExpenditureShare.id_es == expenditure_share_id
+        ).values(
+            {
+             ExpenditureShare.id_expenditure: updated_expenditure_share.id_expenditure,
+             ExpenditureShare.id_user: updated_expenditure_share.id_user,
+             ExpenditureShare.share_percentage: updated_expenditure_share.share_percentage,
+            }
+        )
+        db.execute(update_query)
         db.commit()
-        db.refresh(db_expenditure_share)
+
+        db.refresh(db_expenditure_share)        
+    
+        add_expenditure_share_to_balance(db, expenditure_share=updated_expenditure_share)
+
         return db_expenditure_share
     return None
 

@@ -1,10 +1,10 @@
 from uuid import uuid4
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, update
 
 from fastapi_app.models import ExpenditureBase, ExpenditureComplete
 from fastapi_app.schemas import Expenditure, Category
-from fastapi_app.services.balance_service import delete_expenditure_from_balance
+from fastapi_app.services.balance_service import delete_expenditure_from_balance, add_expenditure_to_balance
 from fastapi_app.services.expenditure_share_service import delete_expenditure_share_by_expenditure_id
 
 def create_expenditure(db: Session, expenditure: ExpenditureBase):
@@ -96,19 +96,29 @@ def get_group_expenditures(
         for e, c in expenditures
     ]
 
-"""
+
 def update_expenditure(db: Session, expenditure_id: int, updated_expenditure: ExpenditureBase):
     db_expenditure = db.query(Expenditure).filter_by(id_expenditure=expenditure_id).first()
     if db_expenditure:
-        db_expenditure.amount = updated_expenditure.amount
-        db_expenditure.id_group = updated_expenditure.id_group
-        db_expenditure.description = updated_expenditure.description
-        db_expenditure.id_category = updated_expenditure.id_category
+        delete_expenditure_from_balance(db=db, id_expenditure=expenditure_id)
+        update_query = update(Expenditure).where(Expenditure.id_expenditure==expenditure_id
+        ).values(
+            {
+             Expenditure.amount: updated_expenditure.amount,
+             Expenditure.description: updated_expenditure.description,
+             Expenditure.id_category: updated_expenditure.id_category,
+            }
+        )
+        db.execute(update_query)
         db.commit()
+
         db.refresh(db_expenditure)
         return db_expenditure
     return None
-"""
+
+
+
+
 def delete_expenditure(db: Session, expenditure_id: int):
     db_expenditure = db.query(Expenditure).filter_by(id_expenditure=expenditure_id).first()
     if db_expenditure:

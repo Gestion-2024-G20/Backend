@@ -34,6 +34,7 @@ class Group(Base):
     name = Column(String)
     members_count = Column(Integer)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
+    description = Column(String)
     
 class Category(Base):
     __tablename__ = "categories"
