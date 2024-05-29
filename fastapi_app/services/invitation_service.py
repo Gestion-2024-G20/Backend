@@ -50,8 +50,10 @@ def get_invitation_by_user_id_group_id(db: Session, user_id: int, group_id: int)
 
 
 #Obtener invitaciones por id de grupo
-def get_invitations_by_group_id(db: Session, group_id: int):
-    return db.query(schemas.Invitation).filter_by(id_group=group_id).all()
+def get_invitations_by_group_id(db: Session, group_id: int, is_request: bool):
+    if is_request is None or is_request != True:
+        return db.query(schemas.Invitation).filter_by(id_group=group_id).all()
+    return db.query(schemas.Invitation).filter_by(id_group=group_id, is_request = True).all()
 
 
 def get_users_by_invitations(db: Session, invitations: List[models.Invitation]):
@@ -62,3 +64,6 @@ def get_users_by_invitations(db: Session, invitations: List[models.Invitation]):
 
         users.append(user)
     return users
+
+def get_requested_invitations_by_group_id(db: Session, group_id: int):
+    return db.query(schemas.Invitation).filter_by(group_id=group_id, is_request=True).all()

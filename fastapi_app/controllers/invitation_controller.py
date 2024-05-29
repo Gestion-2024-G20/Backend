@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pyparsing import List
 from sqlalchemy.orm import Session
 from fastapi_app.services import invitation_service
@@ -162,9 +162,10 @@ async def get_invitations_by_group_id(groupId: int, db: Session = Depends(get_db
 
 
 @router.get("/invitations/users/{id_group}", response_model=ResponseModel)
-async def get_users_by_invitation_group_id(id_group: int, db: Session = Depends(get_db)):
+async def get_users_by_invitation_group_id(id_group: int, db: Session = Depends(get_db), requested: Optional[bool] = Query(None, description="Filtrar por invitaciones solicitadas")):
     try:
-        invitations = invitation_service.get_invitations_by_group_id(db, id_group)
+        print(requested)
+        invitations = invitation_service.get_invitations_by_group_id(db, id_group, requested)
         users = invitation_service.get_users_by_invitations(db, invitations)
         if not users:
             return ResponseModel(
@@ -188,8 +189,30 @@ async def get_users_by_invitation_group_id(id_group: int, db: Session = Depends(
             dataModel=None
         )
 
-
-
+@router.get("/invitations/requested/group/{id_group}", response_model=ResponseModel)
+async def get_requested_invitations_by_group_id(id_group: int, db: Session = Depends(get_db)):
+    try:
+        invitations = invitation_service.get_invitations_by_group_id(db, id_group)
+        if not invitations:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No invitations requested found for this group",
+                dataModel=[]
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Invitations retrieved successfully",
+            dataModel=invitations
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1, 
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
 
 
 
