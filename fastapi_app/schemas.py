@@ -95,3 +95,4 @@ class Request(Base):
     id_request = Column(Integer, Sequence('request_id_seq'), name='id_request', primary_key=True, index=True)
     id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
     token = Column(String)
+    time_created = Column(DateTime(timezone=True), server_default=func.now())

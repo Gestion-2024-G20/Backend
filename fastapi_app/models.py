@@ -80,3 +80,4 @@ class Request(BaseModel):
 	id_request : int
 	id_group : int
 	token : str
+	time_created : str
