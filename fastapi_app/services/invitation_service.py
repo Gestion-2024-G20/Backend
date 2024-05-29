@@ -19,6 +19,7 @@ def create_invitation(db: Session, invitation: models.Invitation):
     db_invitation = schemas.Invitation(
         id_group=invitation.id_group,
         id_user=invitation.id_user,
+        is_request=invitation.is_request
     )
     db.add(db_invitation)
     db.commit()

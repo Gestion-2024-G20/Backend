@@ -61,9 +61,10 @@ class ResponseModel(BaseModel):
 
 #Clase invitación
 class Invitation(BaseModel):
-    id_invitation : int
-    id_group : int
-    id_user : int
+	id_invitation : int
+	id_group : int
+	id_user : int
+	is_request : bool
 
 
 class BalanceItem(BaseModel):
@@ -74,3 +75,8 @@ class BalanceItem(BaseModel):
 class Balance(BaseModel):
 	to_pay: List[BalanceItem]
 	to_receive: List[BalanceItem]
+
+class Request(BaseModel):
+	id_request : int
+	id_group : int
+	token : str

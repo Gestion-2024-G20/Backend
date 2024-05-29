@@ -76,6 +76,7 @@ class Invitation(Base):
     id_invitation = Column(Integer, Sequence('invitation_id_seq'), name='id_invitation', primary_key=True, index=True)
     id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
     id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')
+    is_request = Column(Boolean)
 
 
 # Tabla de saldos
@@ -86,3 +87,11 @@ class Balance(Base):
     id_user_2 = Column(Integer, ForeignKey('users.id_user'), name='id_user_2', primary_key=True, index=True)
     id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group', primary_key=True, index=True)
     balance = Column(Float)
+
+#Tabla de solicitudes
+class Request(Base):
+    __tablename__ = "requests"
+     
+    id_request = Column(Integer, Sequence('request_id_seq'), name='id_request', primary_key=True, index=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
+    token = Column(String)
