@@ -30,24 +30,16 @@ def create_expenditure(expenditure: ExpenditureBase, db: Session = Depends(get_d
 #Obtener los expenditures de un grupo
 @router.get("/expenditures/{id_group}", response_model=ResponseModel)
 def read_group_expenditures(
-<<<<<<< HEAD
-    id_group: int, 
+    id_group: int,
     id_user: Optional[int] = None,
     id_category: Optional[int] = None,
     min_date: Optional[str] = None,
     max_date: Optional[str] = None,
-=======
-    id_group: int,
->>>>>>> main
     db: Session = Depends(get_db)
 ):
     try:
         expenditures = expenditure_service.get_group_expenditures(
-<<<<<<< HEAD
             db, id_group, id_user, id_category, min_date, max_date
-=======
-            db, id_group
->>>>>>> main
         )
         if not expenditures:
             return ResponseModel(
@@ -64,7 +56,7 @@ def read_group_expenditures(
         )
     except Exception as e: 
         return ResponseModel(
-            code=1,
+            code=2,
             message="ERROR",
             detail=str(e),
             dataModel=None
@@ -86,7 +78,7 @@ def delete_expenditure(expenditure_id: int, db: Session = Depends(get_db)):
             code=0,
             message="OK",
             detail="Expenditure deleted successfully",
-            dataModel=None
+            dataModel=deleted_expenditure
         )
     except Exception as e:
         return ResponseModel(
@@ -94,7 +86,7 @@ def delete_expenditure(expenditure_id: int, db: Session = Depends(get_db)):
             message="ERROR",
             detail=str(e),
             dataModel=None
-        )
+    )
 
 
 
@@ -104,7 +96,7 @@ def update_expenditure(
     expenditure_id: int, expenditure: ExpenditureBase, db: Session = Depends(get_db)
 ):
     try:
-        updated_expenditure = expenditure_service.update_expenditure(db=db, expenditure_id=expenditure_id, expenditure=expenditure)
+        updated_expenditure = expenditure_service.update_expenditure(db=db, expenditure_id=expenditure_id, updated_expenditure=expenditure)
         if not updated_expenditure:
             return ResponseModel(
                 code=1,

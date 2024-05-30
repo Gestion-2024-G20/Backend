@@ -12,6 +12,7 @@ class Expenditure(Base):
     id_user = Column(Integer, ForeignKey('users.id_user'))
     amount =  Column(Float)
     id_group = Column(Integer, ForeignKey('groups.id_group'))
+    id_category = Column(Integer, ForeignKey('categories.id_category'))
     description = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     id_expenditure = Column(Integer, Sequence('expenditure_id_seq'), primary_key=True, index=True)
@@ -33,6 +34,7 @@ class Group(Base):
     name = Column(String)
     members_count = Column(Integer)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
+    description = Column(String)
     
 class Category(Base):
     __tablename__ = "categories"
@@ -75,3 +77,23 @@ class Invitation(Base):
     id_invitation = Column(Integer, Sequence('invitation_id_seq'), name='id_invitation', primary_key=True, index=True)
     id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
     id_user = Column(Integer, ForeignKey('users.id_user'), name='id_user')
+    is_request = Column(Boolean)
+
+
+# Tabla de saldos
+class Balance(Base):
+    __tablename__ = "balance"
+
+    id_user_1 = Column(Integer, ForeignKey('users.id_user'), name='id_user_1', primary_key=True, index=True)
+    id_user_2 = Column(Integer, ForeignKey('users.id_user'), name='id_user_2', primary_key=True, index=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group', primary_key=True, index=True)
+    balance = Column(Float)
+
+#Tabla de solicitudes
+class Request(Base):
+    __tablename__ = "requests"
+     
+    id_request = Column(Integer, Sequence('request_id_seq'), name='id_request', primary_key=True, index=True)
+    id_group = Column(Integer, ForeignKey('groups.id_group'), name='id_group')
+    token = Column(String)
+    time_created = Column(DateTime(timezone=True), server_default=func.now())

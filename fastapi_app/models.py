@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 from pyparsing import Any
@@ -9,9 +9,11 @@ class ExpenditureBase(BaseModel):
 	id_group: int
 	description : str
 	id_expenditure : int
+	id_category: int
 
-class Expenditure(ExpenditureBase):
+class ExpenditureComplete(ExpenditureBase):
 	time_created: str
+	name_category: str
 
 class User(BaseModel):
 	id_user : int
@@ -25,6 +27,7 @@ class GroupBase(BaseModel):
 	id_group : int
 	name: str
 	members_count: int
+	description: Optional[str]
 
 class Group(GroupBase):
 	time_created: str
@@ -59,6 +62,23 @@ class ResponseModel(BaseModel):
 
 #Clase invitación
 class Invitation(BaseModel):
-    id_invitation : int
-    id_group : int
-    id_user : int
+	id_invitation : int
+	id_group : int
+	id_user : int
+	is_request : bool
+
+
+class BalanceItem(BaseModel):
+	id_user: int
+	username: str
+	amount: float
+
+class Balance(BaseModel):
+	to_pay: List[BalanceItem]
+	to_receive: List[BalanceItem]
+
+class Request(BaseModel):
+	id_request : int
+	id_group : int
+	token : str
+	time_created : str

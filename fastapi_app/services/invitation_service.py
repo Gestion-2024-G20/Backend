@@ -19,6 +19,7 @@ def create_invitation(db: Session, invitation: models.Invitation):
     db_invitation = schemas.Invitation(
         id_group=invitation.id_group,
         id_user=invitation.id_user,
+        is_request=invitation.is_request
     )
     db.add(db_invitation)
     db.commit()
@@ -32,8 +33,10 @@ def get_invitation(db: Session, invitation_id: int):
     return db.query(schemas.Invitation).filter_by(id_invitation=invitation_id).first()
 
 #obtener invitaciones por id de usuario
-def get_invitations_by_user_id(db: Session, user_id: int):
-    return db.query(schemas.Invitation).filter_by(id_user=user_id).all()
+def get_invitations_by_user_id(db: Session, user_id: int, is_request: bool):
+    if is_request is None or is_request != True:
+        return db.query(schemas.Invitation).filter_by(id_user=user_id, is_request = False).all()
+    return db.query(schemas.Invitation).filter_by(id_user=user_id, is_request = True).all()
 
 def delete_invitation(db: Session, invitation_id: int):
     print("deleting invitation")
@@ -49,8 +52,10 @@ def get_invitation_by_user_id_group_id(db: Session, user_id: int, group_id: int)
 
 
 #Obtener invitaciones por id de grupo
-def get_invitations_by_group_id(db: Session, group_id: int):
-    return db.query(schemas.Invitation).filter_by(id_group=group_id).all()
+def get_invitations_by_group_id(db: Session, group_id: int, is_request: bool):
+    if is_request is None or is_request != True:
+        return db.query(schemas.Invitation).filter_by(id_group=group_id).all()
+    return db.query(schemas.Invitation).filter_by(id_group=group_id, is_request = True).all()
 
 
 def get_users_by_invitations(db: Session, invitations: List[models.Invitation]):
@@ -61,3 +66,6 @@ def get_users_by_invitations(db: Session, invitations: List[models.Invitation]):
 
         users.append(user)
     return users
+
+def get_requested_invitations_by_group_id(db: Session, group_id: int):
+    return db.query(schemas.Invitation).filter_by(group_id=group_id, is_request=True).all()

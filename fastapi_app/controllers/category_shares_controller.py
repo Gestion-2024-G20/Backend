@@ -126,8 +126,8 @@ def delete_category_category_shares(category_id: int, db: Session = Depends(get_
         return ResponseModel(
             code=0,
             message="OK",
-            detail=len(deleted_category_shares) + " Category shares deleted successfully",
-            dataModel=None
+            detail=str(len(deleted_category_shares)) + " Category shares deleted successfully",
+            dataModel=deleted_category_shares
         )
     except Exception as e:
         return ResponseModel(
