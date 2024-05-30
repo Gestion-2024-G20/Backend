@@ -137,7 +137,7 @@ def update_user(
     db: Session = Depends(get_db)
 ):
     try:
-        updated_user = user_service.update_user(db=db, user_id=user_id, user=user)
+        updated_user = user_service.update_user(db=db, user_id=user_id, updated_user=user)
         if not updated_user:
             return ResponseModel(
                 code=1,

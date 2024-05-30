@@ -19,6 +19,8 @@ class User(BaseModel):
 	id_user : int
 	username: str
 	password : str
+	name: str
+	lastname: str
 	token : str
 	mail : str
 	celular : str
