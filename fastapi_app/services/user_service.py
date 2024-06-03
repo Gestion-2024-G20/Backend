@@ -8,6 +8,8 @@ def create_user(db: Session, user: models.User):
     db_user = schemas.User(
         username=user.username,
         password=user.password,
+        name=user.name,
+        lastname=user.lastname,
         token=user.token,
         mail=user.mail,
         celular=user.celular
@@ -40,8 +42,10 @@ def get_users(
     return [
         models.User(
             id_user=u.id_user,
-            username=u.username, 
+            username=u.username,
             password=u.password,
+            name=u.name,
+            lastname=u.lastname,
             token=u.token,
             mail=u.mail,
             celular=u.celular
@@ -61,6 +65,8 @@ def get_user(
             id_user=user.id_user,
             username=user.username, 
             password=user.password,
+            name=user.name,
+            lastname=user.lastname,
             token=user.token,
             mail=user.mail,
             celular=user.celular
@@ -69,11 +75,12 @@ def get_user(
         return None
 
 def update_user(db: Session, user_id: int, updated_user: models.User):
+    print("user_id: ", user_id)
     db_user = db.query(schemas.User).filter_by(id_user=user_id).first()
     if db_user:
         db_user.username = updated_user.username
-        db_user.password = updated_user.password
-        db_user.token = updated_user.token
+        db_user.name = updated_user.name
+        db_user.lastname = updated_user.lastname
         db_user.mail = updated_user.mail
         db_user.celular = updated_user.celular
         db.commit()

@@ -23,6 +23,8 @@ class User(Base):
     id_user = Column(Integer, Sequence('user_id_seq'), name='id_user', primary_key=True, index=True)
     username = Column(String)
     password = Column(String)
+    name = Column(String)
+    lastname = Column(String)
     token = Column(String)
     mail = Column(String)
     celular = Column(String)
