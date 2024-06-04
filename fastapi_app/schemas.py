@@ -28,6 +28,9 @@ class User(Base):
     token = Column(String)
     mail = Column(String)
     celular = Column(String)
+    profile_image_name = Column(String(255), nullable=True)
+
+
 
 class Group(Base):
     __tablename__ = "groups"
