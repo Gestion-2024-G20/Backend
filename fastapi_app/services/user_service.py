@@ -71,7 +71,8 @@ def get_user(
             lastname=user.lastname,
             token=user.token,
             mail=user.mail,
-            celular=user.celular
+            celular=user.celular,
+            profile_image_name=user.profile_image_name
         )
     else:
         return None
