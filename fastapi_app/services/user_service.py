@@ -12,7 +12,8 @@ def create_user(db: Session, user: models.User):
         lastname=user.lastname,
         token=user.token,
         mail=user.mail,
-        celular=user.celular
+        celular=user.celular,
+        profile_image_name="", # Lo dejo vacío en un principio al crear un usuario
     )
     db.add(db_user)
     db.commit()
@@ -48,7 +49,8 @@ def get_users(
             lastname=u.lastname,
             token=u.token,
             mail=u.mail,
-            celular=u.celular
+            celular=u.celular,
+            profile_image_name=u.profile_image_name
         ) 
 
         for u in users
@@ -111,3 +113,18 @@ def get_users_by_group_id(db: Session, group_id: int):
     query = db.query(schemas.User).filter_by(id_group=group_id)
     users = query.all()
     return users
+
+def update_profile_photo(db: Session, user_id: int, filename_profilePicture: str):
+    db_user = db.query(schemas.User).filter_by(id_user=user_id).first()
+    if db_user:
+        db_user.profile_image_name = filename_profilePicture
+        db.commit()
+        db.refresh(db_user)
+        return db_user
+    return None
+
+def get_profile_photo_filename(db: Session, user_id: int):
+    db_user = db.query(schemas.User).filter_by(id_user=user_id).first()
+    if db_user:
+        return db_user.profile_image_name
+    return None

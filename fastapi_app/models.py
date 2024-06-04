@@ -24,6 +24,7 @@ class User(BaseModel):
 	token : str
 	mail : str
 	celular : str
+	profile_image_name : str
 
 class GroupBase(BaseModel):
 	id_group : int

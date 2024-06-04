@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Body, Depends
 from sqlalchemy.orm import Session
 from fastapi_app.services import user_service
 from fastapi_app.get_db import get_db
@@ -150,6 +150,67 @@ def update_user(
             message="OK",
             detail="User updated successfully",
             dataModel=updated_user
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+@router.put("/users/{user_id}/profile-picture", response_model=ResponseModel)
+def update_profile_photo(
+    user_id: int,
+    #Agarro el body de la request y la guardo en la variable profile_photo_json
+    profile_photo_json: dict = Body(...),
+    db: Session = Depends(get_db)
+):
+    try:
+        #Accedo a mi body y extraigo el filename
+        fileName = profile_photo_json["fileName"] 
+        updated_user = user_service.update_profile_photo(db=db, user_id=user_id, filename_profilePicture=fileName)
+        if not updated_user:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="User not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Profile photo updated successfully",
+            dataModel=updated_user
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
+
+@router.get("/users/{user_id}/profile-picture", response_model=ResponseModel)
+def get_profile_photo_url(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+    try:
+        user = user_service.get_profile_photo_filename(db=db, user_id=user_id)
+        if not user:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="User not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Profile photo retrieved successfully",
+            dataModel=user
         )
     except Exception as e:
         return ResponseModel(
