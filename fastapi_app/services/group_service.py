@@ -89,12 +89,48 @@ def delete_group(db: Session, group_id: int):
         if db_group_member:
             for gm in db_group_member:
                 db.delete(gm)
+                db.commit()
 
-        db_category_share = db.query(schemas.CategoryShare).filter_by(id_group=group_id).first()
-        if db_category_share:  
-            for cs in db_category_share:
-                db.delete(cs)
+        db_invitations = db.query(schemas.Invitation).filter_by(id_group=group_id).all()
+        if db_invitations:
+            for i in db_invitations:
+                db.delete(i)
+                db.commit()
 
+        db_balance = db.query(schemas.Balance).filter_by(id_group=group_id).all()
+        if db_balance:
+            for b in db_balance:
+                db.delete(b)
+                db.commit()
+
+        db_request = db.query(schemas.Request).filter_by(id_group=group_id).all()
+        if db_request:
+            for r in db_request:
+                db.delete(r)
+                db.commit()
+        
+
+        db_categories = db.query(schemas.Category).filter_by(id_group=group_id).all()
+        if db_categories:  
+            for c in db_categories:
+                db_category_shares = db.query(schemas.CategoryShare).filter_by(id_category=c.id_category).all()
+                if db_category_shares:  
+                    for cs in db_category_shares:
+                        db.delete(cs)
+                        db.commit()
+                db.delete(c)
+                db.commit()
+
+        db_expenditures = db.query(schemas.Expenditure).filter_by(id_group=group_id).all()
+        if db_expenditures:  
+            for e in db_expenditures:
+                db_expenditure_shares = db.query(schemas.ExpenditureShare).filter_by(id_expenditure=e.id_expenditure).all()
+                if db_expenditure_shares:  
+                    for es in db_expenditure_shares:
+                        db.delete(es)
+                        db.commit()
+                db.delete(e)
+                db.commit()
 
         db.delete(db_group)
         db.commit()

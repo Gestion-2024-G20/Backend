@@ -38,3 +38,26 @@ def get_balance(
             dataModel=None
         )
 
+
+@router.get("/balance/is_null", response_model=ResponseModel)
+def get_balance(
+    id_group: int,
+    db: Session = Depends(get_db)
+):
+    try:
+        is_null = balance_service.is_null(
+            db, id_group
+        )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Balance retrieved successfully",
+            dataModel=is_null
+        )
+    except Exception as e: 
+        return ResponseModel(
+            code=2,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
