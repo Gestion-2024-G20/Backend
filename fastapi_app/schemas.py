@@ -40,6 +40,7 @@ class Group(Base):
     members_count = Column(Integer)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     description = Column(String)
+    is_deleted = Column(Boolean)
     
 class Category(Base):
     __tablename__ = "categories"

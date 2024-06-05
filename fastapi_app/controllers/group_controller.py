@@ -107,7 +107,7 @@ def delete_group(group_id: int, db: Session = Depends(get_db)):
             code=0,
             message="OK",
             detail="Group deleted successfully",
-            dataModel=None
+            dataModel=delete_group
         )
     except Exception as e:
         return ResponseModel(
@@ -121,6 +121,34 @@ def delete_group(group_id: int, db: Session = Depends(get_db)):
 def update_group(group_id: int, group: GroupBase, db: Session = Depends(get_db)):
     try:
         updated_group = group_service.update_group(db, group_id, group)
+        if not updated_group:
+            print("notfound")
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Group not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Group updated successfully",
+            dataModel=updated_group
+        )
+    except Exception as e:
+        print(e)
+
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+    
+@router.put("/groups/mark_as_deleted/{group_id}", response_model=ResponseModel)
+def mark_as_deleted(group_id: int, db: Session = Depends(get_db)):
+    try:
+        updated_group = group_service.mark_as_deleted(db, group_id)
         if not updated_group:
             print("notfound")
             return ResponseModel(

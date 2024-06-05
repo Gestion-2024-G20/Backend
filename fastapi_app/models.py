@@ -34,6 +34,7 @@ class GroupBase(BaseModel):
 
 class Group(GroupBase):
 	time_created: str
+	is_deleted: bool
  
 class GroupMember(BaseModel):
 	id_gm : int

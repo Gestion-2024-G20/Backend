@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import update
 from fastapi_app import schemas, models
 
 
@@ -33,6 +34,7 @@ def get_groups(
             name=g.name,
             members_count=g.members_count,
             time_created=g.time_created.strftime('%Y-%m-%d %H:%M:%S'),
+            is_deleted=g.is_deleted
         ) 
 
         for g in groups
@@ -51,7 +53,8 @@ def get_group_by_id(
             name=group.name,
             members_count=group.members_count,
             time_created=group.time_created.strftime('%Y-%m-%d %H:%M:%S'),
-            description=group.description
+            description=group.description,
+            is_deleted=group.is_deleted
         ) 
     
     
@@ -61,7 +64,8 @@ def create_group(db: Session, group: models.GroupBase):
     db_group = schemas.Group(
         name=group.name,
 	    members_count= group.members_count,
-        description = group.description
+        description = group.description,
+        is_deleted = False
     )
     
     db.add(db_group)
@@ -80,6 +84,23 @@ def update_group(db: Session, group_id: int, updated_group: models.GroupBase):
         db.refresh(db_group)
         return db_group
     return None
+
+def mark_as_deleted(db: Session, group_id: int):
+    db_group = db.query(schemas.Group).filter_by(id_group=group_id).first()
+    if db_group:
+        update_query = update(schemas.Group).where(schemas.Group.id_group==group_id
+        ).values(
+            {
+             schemas.Group.is_deleted:True
+            }
+        )
+        db.execute(update_query)
+        db.commit()
+
+        db.refresh(db_group)
+        return db_group
+    return None
+
 
 def delete_group(db: Session, group_id: int):
     db_group = db.query(schemas.Group).filter_by(id_group=group_id).first()
