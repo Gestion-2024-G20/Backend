@@ -30,6 +30,16 @@ def get_balance(
             to_receive=balance_to_receive
         ) 
 
+def is_null(db: Session,
+            id_group: int):
+    query = db.query(schemas.Balance.balance).filter_by(id_group=id_group).filter(schemas.Balance.balance != 0)
+    count = query.count()
+
+    if count == 0:
+        return 1
+    else:
+        return 0
+
 
 def get_balance_items(db, query, id_user):
     from fastapi_app.services.user_service import get_user
