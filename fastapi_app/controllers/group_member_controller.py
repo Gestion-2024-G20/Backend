@@ -85,3 +85,32 @@ def delete_group_member(group_member_id: int, db: Session = Depends(get_db)):
             detail=str(e),
             dataModel=None
         )
+
+@router.put("/groupMembers/{group_member_id}", response_model=ResponseModel)
+def update_group_member(group_member_id: int, group_member: GroupMember, db: Session = Depends(get_db)):
+    try:
+        print(False == 0)
+        print(group_member)
+        print(group_member_id)
+        updated_group_member = group_member_service.update_group_member(db, group_member_id, group_member)
+        print(updated_group_member)
+        if not updated_group_member:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Group member not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Group member updated successfully",
+            dataModel=updated_group_member
+        )
+    except Exception as e:
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )

@@ -136,7 +136,7 @@ async def get_invitation_by_user_id_group_id(userId: int, groupId: int, db: Sess
 @router.get("/invitations/group/{groupId}", response_model=ResponseModel)
 async def get_invitations_by_group_id(groupId: int, db: Session = Depends(get_db)):
     try:
-        invitations = invitation_service.get_invitations_by_group_id(db, groupId)
+        invitations = invitation_service.get_invitations_by_group_id(db, groupId, None)
         print(invitations)  
         if not invitations:
             return ResponseModel(

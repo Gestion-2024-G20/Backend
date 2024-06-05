@@ -165,3 +165,15 @@ def delete_group_member(db: Session, group_member_id: int):
             print("Error al eliminar el miembro del grupo:", e)
             return False
     return False
+
+def update_group_member(db: Session, group_member_id: int, updated_group_member: schemas.GroupMember):
+    print("El id del group member a actualizar es: ", group_member_id)
+    db_group_member = db.query(schemas.GroupMember).filter_by(id_gm=group_member_id).first()
+    if db_group_member:
+        db_group_member.id_group = updated_group_member.id_group
+        db_group_member.id_user = updated_group_member.id_user
+        db_group_member.is_admin = updated_group_member.is_admin
+        db.commit()
+        db.refresh(db_group_member)
+        return db_group_member
+    return None
