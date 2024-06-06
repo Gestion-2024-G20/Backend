@@ -145,7 +145,7 @@ def update_group(group_id: int, group: GroupBase, db: Session = Depends(get_db))
             dataModel=None
         )
     
-@router.put("/groups/mark_as_deleted/{group_id}", response_model=ResponseModel)
+@router.post("/groups/mark_as_deleted/{group_id}", response_model=ResponseModel)
 def mark_as_deleted(group_id: int, db: Session = Depends(get_db)):
     try:
         updated_group = group_service.mark_as_deleted(db, group_id)
