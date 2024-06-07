@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from pydantic import BaseModel
 from pyparsing import Any
@@ -86,3 +86,8 @@ class Request(BaseModel):
 	id_group : int
 	token : str
 	time_created : str
+
+class Statistics(BaseModel):
+	percentages_by_user: dict
+	percentages_by_category: dict
+	percentages_by_category_and_user: dict

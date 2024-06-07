@@ -36,13 +36,14 @@ def create_category(category: CategoryBase, db: Session = Depends(get_db)):
 def get_categories(
     id_group: Optional[int] = None,
     name: Optional[str] = None,
+    id_category: Optional[int] = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
     try:
         categories = category_service.get_categories(
-            db, skip, limit, id_group, name
+            db=db, skip=skip, limit=limit, id_group=id_group, name=name, id_category=id_category
         )
         if not categories:
             return ResponseModel(

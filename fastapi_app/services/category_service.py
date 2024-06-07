@@ -1,15 +1,17 @@
 from sqlalchemy.orm import Session
 from fastapi_app.exceptions import BackendException
+from typing import Optional
 
 from fastapi_app.models import CategoryBase
 from fastapi_app.schemas import Category
 
 def get_categories(
     db: Session,
-    skip: int,
-    limit: int,
     id_group: int,
-    name: str
+    skip: Optional[int],
+    limit: Optional[int],
+    name: Optional[str],
+    id_category: Optional[int]
 ):
     query = db.query(Category)
 
@@ -18,6 +20,9 @@ def get_categories(
         
     if name is not None:
         query = query.filter_by(name=name)
+    
+    if id_category is not None:
+        query = query.filter_by(id_category=id_category)
 
     categories = query.offset(skip).limit(limit).all()
 
