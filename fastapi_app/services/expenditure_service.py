@@ -62,9 +62,8 @@ def get_group_expenditures(
     	Expenditure, Category
     ).filter_by(
         id_group=id_group
-    ).join(
-        Category, Expenditure.id_category == Category.id_category
     )
+    #.join(Category, Expenditure.id_category == Category.id_category)
 	
     if id_user is not None:
         query = query.filter_by(id_user=id_user)

@@ -62,6 +62,42 @@ def read_group_expenditures(
             dataModel=None
         )
 
+
+#Obtener todos los expenditures 
+@router.get("/expenditures", response_model=ResponseModel)
+def read_group_expenditures(
+    id_group: Optional[int] = None,
+    id_user: Optional[int] = None,
+    id_category: Optional[int] = None,
+    min_date: Optional[str] = None,
+    max_date: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    try:
+        expenditures = expenditure_service.get_expenditures(
+            db, id_group, id_user, id_category, min_date, max_date
+        )
+        if not expenditures:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="No expenditures found",
+                dataModel=[]
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Expenditures retrieved successfully",
+            dataModel=expenditures
+        )
+    except Exception as e: 
+        return ResponseModel(
+            code=2,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+
 # Borrar expenditure
 @router.delete("/expenditures/{expenditure_id}", response_model=ResponseModel)
 def delete_expenditure(expenditure_id: int, db: Session = Depends(get_db)):
