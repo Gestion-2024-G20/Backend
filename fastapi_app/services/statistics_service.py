@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi_app import schemas, models
 from fastapi_app.services.user_service import get_user
 from fastapi_app.services.category_service import get_categories
+import round_percentages
 
 def add_value_to_dict(dic, key, value):
     if key not in dic:
@@ -15,9 +16,12 @@ def add_value_to_dict(dic, key, value):
 def convert_sum_to_percetentage(dic):
     total_sum = sum(dic.values())
 
+    percentages = [value/total_sum * 100 for value in dic.values()]
+    rounded_percentages = round_percentages(percentages)
+
     percentage_dict = {
-        key: value/total_sum * 100
-        for key, value in dic.items()
+        key: value
+        for key, value in zip(dic.keys(), rounded_percentages)
     }
 
     return percentage_dict
