@@ -8,7 +8,7 @@ from fastapi_app.services import statistics_service
 
 router = APIRouter()
 
-@router.get("/statistics")
+@router.get("/statistics/{id_group}")
 async def get_statistics(id_group: int, db: Session = Depends(get_db)):
     try:
         statistics = statistics_service.get_statistics(db, id_group)
