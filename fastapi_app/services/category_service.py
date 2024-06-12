@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import update
 from fastapi_app.exceptions import BackendException
 from typing import Optional
 
@@ -49,3 +50,20 @@ def delete_category(db: Session, category_id: int):
     db.delete(category)
     db.commit()
     return category
+
+def update_category(db: Session, category_id: int, updated_category: CategoryBase):
+    db_category = db.query(Category).filter_by(id_category=category_id).first()
+    if db_category:
+        update_query = update(Category).where(Category.id_category==category_id
+        ).values(
+            {
+             Category.name: updated_category.name,
+             Category.description: updated_category.description,
+            }
+        )
+        db.execute(update_query)
+        db.commit()
+
+        db.refresh(db_category)
+        return db_category
+    return None

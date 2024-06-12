@@ -93,3 +93,31 @@ def delete_category(
             detail='Error deleting category',
             dataModel=None
         )
+    
+@router.put("/category/{category_id}", response_model=ResponseModel)
+def update_category(category_id: int, category: CategoryBase, db: Session = Depends(get_db)):
+    try:
+        updated_category = category_service.update_category(db, category_id, category)
+        if not updated_category:
+            return ResponseModel(
+                code=1,
+                message="NOT FOUND",
+                detail="Category not found",
+                dataModel=None
+            )
+        return ResponseModel(
+            code=0,
+            message="OK",
+            detail="Category updated successfully",
+            dataModel=updated_category
+        )
+    except Exception as e:
+        print(e)
+
+        return ResponseModel(
+            code=1,
+            message="ERROR",
+            detail=str(e),
+            dataModel=None
+        )
+    
