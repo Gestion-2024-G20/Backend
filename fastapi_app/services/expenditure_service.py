@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, func, update
 
 from fastapi_app.models import ExpenditureBase, ExpenditureComplete
-from fastapi_app.schemas import Expenditure, Category
+from fastapi_app.schemas import Expenditure, Category, User
 from fastapi_app.services.balance_service import delete_expenditure_from_balance, add_expenditure_to_balance
 from fastapi_app.services.expenditure_share_service import delete_expenditure_share_by_expenditure_id
 
@@ -59,10 +59,13 @@ def get_group_expenditures(
     min_date: str = None, max_date: str = None
 ):
     query = db.query(
-    	Expenditure, Category
+    	Expenditure, User, Category
     ).filter_by(
         id_group=id_group
-    ).join(Category, Expenditure.id_category == Category.id_category)
+    ).join(User, User.id_user == Expenditure.id_user
+    ).join(Category, Expenditure.id_category == Category.id_category, isouter=True
+    )
+    
 	
     if id_user is not None:
         query = query.filter_by(id_user=id_user)
@@ -86,12 +89,13 @@ def get_group_expenditures(
             id_group=e.id_group,
             description=e.description,
             id_category=e.id_category,
-            name_category=c.name,
+            name_category=(c.name if c else "SALDO DEUDA"),
+            username=u.username,
             time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S'), 
             id_expenditure=e.id_expenditure
         ) 
 
-        for e, c in expenditures
+        for e, u, c in expenditures
     ]
 
 
