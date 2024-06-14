@@ -47,7 +47,9 @@ def get_group_by_id(
 ):    
     group = db.query(schemas.Group).filter_by(id_group=id_group).first()
 
-    
+    if not group:
+        return None
+
     return models.Group(
             id_group=group.id_group,
             name=group.name,
