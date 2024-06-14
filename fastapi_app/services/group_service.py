@@ -79,7 +79,7 @@ def update_group(db: Session, group_id: int, updated_group: models.GroupBase):
     if db_group:
         db_group.name = updated_group.name
         db_group.members_count = updated_group.members_count
-        db.group.description = update_group.description
+        db_group.description = updated_group.description
         db.commit()
         db.refresh(db_group)
         return db_group
