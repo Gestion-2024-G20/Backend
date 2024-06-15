@@ -59,17 +59,18 @@ def get_group_expenditures(
     min_date: str = None, max_date: str = None
 ):
     query = db.query(
-    	Expenditure, Category
-    ).filter_by(
-        id_group=id_group
-    ).join(Category, Expenditure.id_category == Category.id_category)
+        Expenditure, Category
+    ).join(
+        Category, Expenditure.id_category == Category.id_category
+    ).filter(
+        Expenditure.id_group == id_group
+    )
 	
     if id_user is not None:
-        query = query.filter_by(id_user=id_user)
+        query = query.filter(Expenditure.id_user == id_user)
 
     if id_category is not None:
-        query = query.filter_by(id_category=id_category) 
-
+        query = query.filter(Expenditure.id_category == id_category)
 
     if min_date is not None:
         query = query.filter(func.date(Expenditure.time_created) >= min_date)
