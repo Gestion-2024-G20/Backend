@@ -4,7 +4,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, func, update
 from sqlalchemy.orm import aliased
 
+<<<<<<< HEAD
 from fastapi_app.models import ExpenditureBase, ExpenditureComplete, User
+=======
+from fastapi_app.models import ExpenditureBase, ExpenditureComplete
+>>>>>>> 01efa0277fc9dfbba1e311eb6cdfd2aaf88ccc67
 from fastapi_app.schemas import Expenditure, Category, User
 from fastapi_app.services.balance_service import delete_expenditure_from_balance, add_expenditure_to_balance
 from fastapi_app.services.expenditure_share_service import delete_expenditure_share_by_expenditure_id
@@ -62,6 +66,7 @@ def get_group_expenditures(
 ):
 
     query = db.query(
+<<<<<<< HEAD
         Expenditure, Category, User.username
     ).join(
         Category, Expenditure.id_category == Category.id_category
@@ -70,6 +75,15 @@ def get_group_expenditures(
     ).filter(
         Expenditure.id_group == id_group
     )
+=======
+    	Expenditure, User, Category
+    ).filter_by(
+        id_group=id_group
+    ).join(User, User.id_user == Expenditure.id_user
+    ).join(Category, Expenditure.id_category == Category.id_category, isouter=True
+    )
+    
+>>>>>>> 01efa0277fc9dfbba1e311eb6cdfd2aaf88ccc67
 	
     if id_user is not None:
         query = query.filter(Expenditure.id_user == id_user)
@@ -92,13 +106,18 @@ def get_group_expenditures(
             id_group=e.id_group,
             description=e.description,
             id_category=e.id_category,
-            name_category=c.name,
+            name_category=(c.name if c else "SALDO DEUDA"),
+            username=u.username,
             time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S'), 
             id_expenditure=e.id_expenditure,
             username=u,
         ) 
 
+<<<<<<< HEAD
         for e, c, u in expenditures
+=======
+        for e, u, c in expenditures
+>>>>>>> 01efa0277fc9dfbba1e311eb6cdfd2aaf88ccc67
     ]
 
 

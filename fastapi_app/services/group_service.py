@@ -47,7 +47,9 @@ def get_group_by_id(
 ):    
     group = db.query(schemas.Group).filter_by(id_group=id_group).first()
 
-    
+    if not group:
+        return None
+
     return models.Group(
             id_group=group.id_group,
             name=group.name,
@@ -79,7 +81,7 @@ def update_group(db: Session, group_id: int, updated_group: models.GroupBase):
     if db_group:
         db_group.name = updated_group.name
         db_group.members_count = updated_group.members_count
-        db.group.description = update_group.description
+        db_group.description = updated_group.description
         db.commit()
         db.refresh(db_group)
         return db_group

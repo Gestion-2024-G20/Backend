@@ -36,6 +36,9 @@ def get_statistics(db: Session, id_group: int):
     sum_by_category_and_user = {}        
 
     for expenditure in expenditures:
+        # Ignorar gastos de la categoria "SALDO DE DEUDA"
+        if expenditure.id_category == 0:
+            continue
         user = get_user(db, expenditure.id_user).username
         category = get_categories(db=db, id_group=expenditure.id_group, id_category=expenditure.id_category, skip=0, limit=1, name=None)[0].name
         amount = expenditure.amount
