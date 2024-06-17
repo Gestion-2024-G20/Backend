@@ -1,9 +1,11 @@
+from ast import alias
 from uuid import uuid4
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func, update
+from sqlalchemy.orm import aliased
 
-from fastapi_app.models import ExpenditureBase, ExpenditureComplete
-from fastapi_app.schemas import Expenditure, Category
+from fastapi_app.models import ExpenditureBase, ExpenditureComplete, User
+from fastapi_app.schemas import Expenditure, Category, User
 from fastapi_app.services.balance_service import delete_expenditure_from_balance, add_expenditure_to_balance
 from fastapi_app.services.expenditure_share_service import delete_expenditure_share_by_expenditure_id
 
@@ -58,10 +60,13 @@ def get_group_expenditures(
     id_user: int = None, id_category: int = None,
     min_date: str = None, max_date: str = None
 ):
+
     query = db.query(
-        Expenditure, Category
+        Expenditure, Category, User.username
     ).join(
         Category, Expenditure.id_category == Category.id_category
+    ).join(
+        User, Expenditure.id_user == User.id_user
     ).filter(
         Expenditure.id_group == id_group
     )
@@ -89,10 +94,11 @@ def get_group_expenditures(
             id_category=e.id_category,
             name_category=c.name,
             time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S'), 
-            id_expenditure=e.id_expenditure
+            id_expenditure=e.id_expenditure,
+            username=u,
         ) 
 
-        for e, c in expenditures
+        for e, c, u in expenditures
     ]
 
 
