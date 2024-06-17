@@ -95,7 +95,6 @@ def get_group_expenditures(
             username=u.username,
             time_created=e.time_created.strftime('%Y-%m-%d %H:%M:%S'), 
             id_expenditure=e.id_expenditure,
-            username=u,
         ) 
 
         for e, c, u in expenditures
