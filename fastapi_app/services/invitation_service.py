@@ -34,9 +34,36 @@ def get_invitation(db: Session, invitation_id: int):
 
 #obtener invitaciones por id de usuario
 def get_invitations_by_user_id(db: Session, user_id: int, is_request: bool):
-    if is_request is None or is_request != True:
-        return db.query(schemas.Invitation).filter_by(id_user=user_id, is_request = False).all()
-    return db.query(schemas.Invitation).filter_by(id_user=user_id, is_request = True).all()
+    query = db.query(
+        schemas.Invitation.id_invitation,
+        schemas.Invitation.id_group,
+        schemas.Invitation.id_user,
+        schemas.Invitation.is_request,
+        schemas.Group.name.label('group_name')
+    ).join(
+        schemas.Group, schemas.Invitation.id_group == schemas.Group.id_group
+    ).filter(
+        schemas.Invitation.id_user == user_id
+    )
+
+    if is_request is None or not is_request:
+        query = query.filter(schemas.Invitation.is_request == False)
+    else:
+        query = query.filter(schemas.Invitation.is_request == True)
+
+    results = query.all()
+    invitations = []
+    for result in results:
+        invitation = {
+            'id_invitation': result.id_invitation,
+            'id_group': result.id_group,
+            'id_user': result.id_user,
+            'is_request': result.is_request,
+            'group_name': result.group_name
+        }
+        invitations.append(invitation)
+
+    return invitations
 
 def delete_invitation(db: Session, invitation_id: int):
     print("deleting invitation")
